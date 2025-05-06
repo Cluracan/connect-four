@@ -33,14 +33,17 @@ const negamax = (position: GameBoard, alpha: number, beta: number) => {
 
   for (const col of [3, 2, 4, 1, 5, 0, 6]) {
     if (position.canPlay(col)) {
-      let nextPosition = new GameBoard(position.history);
-      nextPosition.play(col);
+      position.play(col);
 
-      let score: number = -negamax(nextPosition, -beta, -alpha);
-      if (score >= beta) return score;
+      let score: number = -negamax(position, -beta, -alpha);
+      if (score >= beta) {
+        position.unplay(col);
+        return score;
+      }
       if (score > alpha) {
         alpha = score;
       }
+      position.unplay(col);
     }
   }
   return alpha | 0;

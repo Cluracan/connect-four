@@ -113,6 +113,13 @@ class GameBoard {
     this.history = `${this.history}${(col + 1).toString()}`;
   }
 
+  unplay(col: number) {
+    this.gameBoard[col][this.height[col] - 1] = 0;
+    this.height[col]--;
+    this.moves--;
+    this.history = this.history.slice(0, this.history.length - 1);
+  }
+
   printBoard() {
     for (let i = GameBoard.height; i >= 0; i--) {
       let printRow = [];
