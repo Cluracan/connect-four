@@ -28,25 +28,18 @@ class GameBitBoard {
     this.moveHistory.push(col);
   }
 
-  undoMove() {
-    let col = this.moveHistory.pop();
-    if (col) {
-      this.height[col]--;
-      this.moveCounter--;
-      const move: bigint = 1n << BigInt(this.height[col]);
-      this.gameBitBoard[this.moveCounter & 1] ^= move;
-    } else {
-      console.error("can't undo - no moves left");
-    }
+  undoMove(col: number) {
+    this.moveHistory.pop();
+    this.height[col]--;
+    this.moveCounter--;
+    const move: bigint = 1n << BigInt(this.height[col]);
+    this.gameBitBoard[this.moveCounter & 1] ^= move;
   }
 
-  isWin(col: number) {
+  isWinningMove(col: number) {
     let nextBitBoard = this.gameBitBoard[this.moveCounter & 1];
     const move: bigint = 1n << BigInt(this.height[col]);
-    console.log(nextBitBoard.toString(2));
-    console.log(this.height);
     nextBitBoard ^= move;
-    console.log(nextBitBoard.toString(2));
     const directions: bigint[] = [1n, 7n, 6n, 8n];
     for (const direction of directions) {
       if (
@@ -64,7 +57,7 @@ class GameBitBoard {
 
   initialiseGameBitBoard(initialMoveHistory: string) {
     for (let i = 0; i < initialMoveHistory.length; i++) {
-      this.makeMove(parseInt(initialMoveHistory[i]));
+      this.makeMove(parseInt(initialMoveHistory[i]) - 1);
     }
   }
 
@@ -85,8 +78,11 @@ class GameBitBoard {
   }
 }
 
-const testBoard = new GameBitBoard("010203");
-console.log(testBoard);
-testBoard.printBoards();
-
-console.log(testBoard.isWin(0));
+// const testBoard = new GameBitBoard("524653332256623414472524557673341711667");
+// for (let i = 0; i < 7; i++) {
+//   if (testBoard.canMove(i)) {
+//     console.log(testBoard.isWinningMove(i));
+//   }
+// }
+// testBoard.printBoards();
+export { GameBitBoard };
