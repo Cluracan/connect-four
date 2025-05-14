@@ -132,3 +132,9 @@ class GameBoard {
 }
 
 export { GameBoard };
+
+const testBoard = new GameBoard("524653332256623414472524557673341711667");
+for (let i = 0; i < 7; i++) {
+  if (testBoard.canPlay(i)) console.log(testBoard.isWinningMove(i));
+}
+testBoard.printBoard();
