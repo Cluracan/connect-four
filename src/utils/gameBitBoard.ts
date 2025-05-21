@@ -3,6 +3,9 @@
 class GameBitBoard {
   static width = 7;
   static height = 6;
+  static minScore = -(this.width * this.height) / 2 + 3;
+  static maxScore = (this.width * this.height) / 2 - 3;
+  static totalMoves = this.width * this.height;
   moveHistory: number[];
   moveCounter: number;
   gameBitBoard: bigint[];
@@ -59,6 +62,10 @@ class GameBitBoard {
     for (let i = 0; i < initialMoveHistory.length; i++) {
       this.makeMove(parseInt(initialMoveHistory[i]) - 1);
     }
+  }
+
+  hashBoard() {
+    return `${this.gameBitBoard[0]},${this.gameBitBoard[1]}`;
   }
 
   printBoards() {

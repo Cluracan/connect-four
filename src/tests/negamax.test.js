@@ -19,15 +19,15 @@ const endEasyTests = endEasyData
       .map((entry, index) => (index === 0 ? entry : parseInt(entry)))
   );
 
-test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
-  const testBoard = new GameBoard(history);
-  expect(negamax(testBoard, -Infinity, Infinity)).toBe(score);
-});
-
 // test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
-//   const testBoard = new GameBitBoard(history);
-//   expect(negaBITmax(testBoard, -Infinity, Infinity)).toBe(score);
+//   const testBoard = new GameBoard(history);
+//   expect(negamax(testBoard, -Infinity, Infinity)).toBe(score);
 // });
+
+test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
+  const testBoard = new GameBitBoard(history);
+  expect(negaBITmax(testBoard, -Infinity, Infinity)).toBe(score);
+});
 
 // test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
 //   const testBoard = new PonsBitBoard(history);
