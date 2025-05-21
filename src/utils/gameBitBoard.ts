@@ -4,7 +4,7 @@ class GameBitBoard {
   static width = 7;
   static height = 6;
   static minScore = -(this.width * this.height) / 2 + 3;
-  static maxScore = (this.width * this.height) / 2 - 3;
+  static maxScore = Math.floor((this.width * this.height + 1) / 2 - 3);
   static totalMoves = this.width * this.height;
   moveHistory: number[];
   moveCounter: number;
