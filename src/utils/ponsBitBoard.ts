@@ -94,8 +94,8 @@ class PonsBitBoard {
   }
 }
 
-const testBoard = new PonsBitBoard("112233");
-console.log(testBoard);
+// const testBoard = new PonsBitBoard("112233");
+// console.log(testBoard);
 // for (let i = 0; i < 7; i++) {
 //   if (testBoard.canPlay(i)) {
 //     console.log(testBoard.isWinningMove(i));

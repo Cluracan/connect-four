@@ -51,4 +51,30 @@ const ponsNegamax = (position: PonsBitBoard, alpha: number, beta: number) => {
   return alpha | 0;
 };
 
-export { ponsNegamax };
+const ponsSolve = (position: PonsBitBoard) => {
+  let min = -Math.floor(
+    PonsBitBoard.width * PonsBitBoard.height - position.nbMoves() / 2
+  );
+  let max =
+    Math.floor(
+      PonsBitBoard.width * PonsBitBoard.height + 1 - position.nbMoves()
+    ) / 2;
+  while (min < max) {
+    let med = Math.floor(min + (max - min) / 2);
+    if (med <= 0 && min / 2 < med) {
+      med = Math.ceil(min / 2);
+    } else if (med >= 0 && max / 2 > med) {
+      med = Math.floor(max / 2);
+    }
+    let r = Math.floor(ponsNegamax(position, med, med + 1)) | 0;
+
+    if (r <= med) {
+      max = r;
+    } else {
+      min = r;
+    }
+  }
+  return min;
+};
+
+export { ponsNegamax, ponsSolve };
