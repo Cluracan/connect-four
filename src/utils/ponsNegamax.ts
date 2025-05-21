@@ -1,4 +1,5 @@
 import { PonsBitBoard } from "./ponsBitBoard";
+const transpositionTable = new Map();
 
 const ponsNegamax = (position: PonsBitBoard, alpha: number, beta: number) => {
   if (position.nbMoves() === PonsBitBoard.height * PonsBitBoard.width) {
@@ -20,6 +21,13 @@ const ponsNegamax = (position: PonsBitBoard, alpha: number, beta: number) => {
     (PonsBitBoard.width * PonsBitBoard.height + 1 - position.nbMoves()) / 2
   );
 
+  if (transpositionTable.has(position.key())) {
+    maxScore =
+      transpositionTable.get(position.current_position) +
+      PonsBitBoard.min_score -
+      1;
+  }
+
   if (beta > maxScore) {
     beta = maxScore; //beta (best case score can't be greater than this)
     if (alpha > beta) return beta; //if [alpha,beta] window is empty, prune exploration
@@ -39,6 +47,7 @@ const ponsNegamax = (position: PonsBitBoard, alpha: number, beta: number) => {
       }
     }
   }
+  transpositionTable.set(position.key(), alpha - PonsBitBoard.min_score + 1);
   return alpha | 0;
 };
 

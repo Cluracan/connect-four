@@ -1,6 +1,8 @@
 class PonsBitBoard {
   static width = 7;
   static height = 6;
+  static min_score = -(this.width * this.height) / 2 + 3;
+  static max_score = Math.floor((this.width * this.height + 1) / 2 - 3);
   current_position: bigint;
   mask: bigint;
   moves: number;
