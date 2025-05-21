@@ -61,7 +61,30 @@ const negaBITmax = (position: GameBitBoard, alpha: number, beta: number) => {
   return alpha | 0;
 };
 
-export { negaBITmax };
+const bitSolve = (position: GameBitBoard) => {
+  let minScore =
+    -Math.floor(GameBitBoard.totalMoves - position.moveCounter) / 2;
+  let maxScore = Math.floor(
+    (GameBitBoard.totalMoves + 1 - position.moveCounter) / 2
+  );
+  while (minScore < maxScore) {
+    let medianScore = Math.floor((minScore + maxScore) / 2);
+    if (medianScore <= 0 && minScore / 2 < medianScore) {
+      medianScore = Math.floor(minScore / 2);
+    } else if (medianScore >= 0 && maxScore / 2 > medianScore) {
+      medianScore = Math.floor(maxScore / 2);
+    }
+    let searchValue = negaBITmax(position, medianScore, medianScore + 1) | 0;
+    if (searchValue <= medianScore) {
+      maxScore = searchValue;
+    } else {
+      minScore = searchValue;
+    }
+  }
+  return minScore;
+};
+
+export { negaBITmax, bitSolve };
 
 // const testBoard = new GameBitBoard("2252576253462244111563365343671351441");
 
