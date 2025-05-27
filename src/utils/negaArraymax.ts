@@ -1,4 +1,4 @@
-import { GameBoard } from "./gameBoard";
+import { GameBoard } from "./gameArrayBoard";
 
 /**
  * Reccursively score connect 4 position using negamax variant of alpha-beta algorithm.
