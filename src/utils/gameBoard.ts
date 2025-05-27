@@ -263,9 +263,8 @@ class GameBoard {
     return count;
   }
 
-  evaluatePosition() {
+  evaluatePosition(position: bigint) {
     const blankSpace = this.boardMask ^ this.mask;
-    let position = this.currentPosition;
     let twoCount = 0;
     //count two stones that could be fours
     //vertical
@@ -331,11 +330,15 @@ class GameBoard {
       twoCount += this.bitCount(fourMatch);
       console.log({ matchOXXO: this.bitCount(fourMatch) });
     }
+    let threeCount = this.bitCount(
+      this.getWinningPositions(position, this.mask)
+    );
+    console.log({ threeCount });
   }
 }
 
-const test = new GameBoard("1125261");
-test.evaluatePosition();
+const test = new GameBoard("112526156564441");
+test.evaluatePosition(test.currentPosition);
 test.printPosition();
-
+test.evaluatePosition(test.mask ^ test.currentPosition);
 export { GameBoard };
