@@ -1,140 +1,317 @@
+/**
+ * A class storing a Connect 4 position.
+ * Functions are relative to the current player to play.
+ *
+ * A binary bitboard representation is used.
+ * Each column is encoded on HEIGHT+1 bits.
+ *
+ * Bit order to encode for a 7x6 board
+ * .  .  .  .  .  .  .
+ * 5 12 19 26 33 40 47
+ * 4 11 18 25 32 39 46
+ * 3 10 17 24 31 38 45
+ * 2  9 16 23 30 37 44
+ * 1  8 15 22 29 36 43
+ * 0  7 14 21 28 35 42
+ *
+ * Position is stored as
+ * - a bitboard "mask" with 1 on any color stones
+ * - a bitboard "current_player" with 1 on stones of current player
+ *
+ * "current_player" bitboard can be transformed into a compact and non ambiguous key
+ * by adding an extra bit on top of the last non empty cell of each column.
+ * This allow to identify all the empty cells whithout needing "mask" bitboard
+ *
+ * current_player "x" = 1, opponent "o" = 0
+ * board     position  mask      key       bottom
+ *           0000000   0000000   0000000   0000000
+ * .......   0000000   0000000   0001000   0000000
+ * ...o...   0000000   0001000   0010000   0000000
+ * ..xx...   0011000   0011000   0011000   0000000
+ * ..ox...   0001000   0011000   0001100   0000000
+ * ..oox..   0000100   0011100   0000110   0000000
+ * ..oxxo.   0001100   0011110   1101101   1111111
+ *
+ * current_player "o" = 1, opponent "x" = 0
+ * board     position  mask      key       bottom
+ *           0000000   0000000   0001000   0000000
+ * ...x...   0000000   0001000   0000000   0000000
+ * ...o...   0001000   0001000   0011000   0000000
+ * ..xx...   0000000   0011000   0000000   0000000
+ * ..ox...   0010000   0011000   0010100   0000000
+ * ..oox..   0011000   0011100   0011010   0000000
+ * ..oxxo.   0010010   0011110   1110011   1111111
+ *
+ * key is an unique representation of a board key = position + mask + bottom
+ * in practice, as bottom is constant, key = position + mask is also a
+ * non-ambigous representation of the position.
+ */
+
+/**
+ * Generate a bitmask containing one for the bottom slot of each colum
+ * must be defined outside of the class definition to be available at compile time for bottom_mask
+ * recursive fn where height+1 creates the 7-step in positions and you push (OR) single 1's into the value
+ */
+const generateBottomMask = (width: number, height: number): bigint => {
+  return width === 0
+    ? 0n
+    : generateBottomMask(width - 1, height) |
+        (1n << BigInt((width - 1) * (height + 1)));
+};
+
 class GameBoard {
   static width = 7;
   static height = 6;
-  history;
-  height;
-  moves;
-  gameBoard;
-  constructor(initHistory: string = "") {
-    this.history = "";
-    this.height = Array.from({ length: GameBoard.width }, () => 0);
-    this.moves = 0;
-    this.gameBoard = Array.from({ length: GameBoard.width }, () =>
-      Array.from({ length: GameBoard.height }, () => 0)
+  static size = this.width * this.height;
+
+  mask: bigint;
+  bottomMask: bigint;
+  boardMask: bigint;
+  currentPosition: bigint;
+  moveCount: number;
+  constructor(moveInput: string) {
+    this.mask = 0n;
+    this.currentPosition = 0n;
+    this.bottomMask = generateBottomMask(GameBoard.width, GameBoard.height);
+    this.boardMask = this.bottomMask * ((1n << BigInt(GameBoard.height)) - 1n);
+    this.moveCount = 0;
+    this.initialiseBoard(moveInput);
+  }
+  // return a bitmask 1 on all the cells of a given column
+  columnMask = (col: number) => {
+    return (
+      ((1n << BigInt(GameBoard.height)) - 1n) <<
+      BigInt(col * (GameBoard.height + 1))
     );
-    this.initialiseGameBoard(initHistory);
+  };
+  //return a bitmask containg a single 1 corresponding to the top cell of a given column
+  columnTopMask = (col: number) => {
+    return 1n << BigInt(GameBoard.height - 1 + col * (GameBoard.height + 1));
+  };
+  // return a bitmask containg a single 1 corresponding to the bottom cell of a given column
+  columnBottomMask = (col: number) => {
+    return 1n << BigInt(col * (GameBoard.height + 1));
+  };
+
+  canPlay(col: number) {
+    return (this.mask & this.columnTopMask(col)) === 0n;
   }
 
-  initialiseGameBoard(initHistory: string) {
-    for (let i = 0; i < initHistory.length; i++) {
-      const col = Number(initHistory[i]) - 1;
+  // Indicates whether the current player wins by playing a given column.
+  isWinningColumn(col: number) {
+    return (
+      (this.winningPositions() &
+        this.possibleMoves() &
+        this.columnMask(col)) !==
+      0n
+    );
+  }
+
+  //This function should not be called on a non-playable column or a winning column.
+  playColumn(col: number) {
+    let move = (this.mask + this.columnBottomMask(col)) & this.columnMask(col);
+    //extra bit carries all the way to the top of that column, like 99999 + 1 (except in base 2)
+    this.playMove(move);
+  }
+
+  playMove(move: bigint) {
+    this.currentPosition ^= this.mask;
+    this.mask |= move;
+    this.moveCount++;
+  }
+  //TODO - alter to 0 based once testing done?
+  //moveInput is a 1 - based index of the board (for testing)
+  initialiseBoard(moveInput: string) {
+    for (let i = 0; i < moveInput.length; i++) {
+      let col = parseInt(moveInput[i]) - 1;
       if (
         col < 0 ||
-        col > GameBoard.width ||
+        col > GameBoard.width - 1 ||
         !this.canPlay(col) ||
-        this.isWinningMove(col)
+        this.isWinningColumn(col)
       ) {
         console.error(
-          `invalid move in history: ${initHistory} error is ${initHistory[i]}`
+          `Error in initial input string ${moveInput} at ${moveInput[i]}`
         );
-        return;
+        break;
       }
-      this.play(col);
+      this.playColumn(col);
     }
-  }
-  canPlay(col: number) {
-    return this.height[col] < GameBoard.height;
-  }
-  isWinningMove(col: number) {
-    const currentPlayer = 1 + (this.moves % 2);
-    //vertical check
-    if (
-      this.height[col] > 2 &&
-      this.gameBoard[col][this.height[col] - 1] === currentPlayer &&
-      this.gameBoard[col][this.height[col] - 2] === currentPlayer &&
-      this.gameBoard[col][this.height[col] - 3] === currentPlayer
-    ) {
-      return true;
-    }
-    //horizontal check
-    let winCount = 0;
-    for (const dx of [-1, 1]) {
-      let curCol = col + dx;
-      while (
-        curCol >= 0 &&
-        curCol < GameBoard.width &&
-        this.gameBoard[curCol][this.height[col]] === currentPlayer
-      ) {
-        winCount++;
-        curCol += dx;
-      }
-    }
-    if (winCount >= 3) {
-      return true;
-    }
-    //diagonal check positive
-    winCount = 0;
-    for (const dx of [-1, 1]) {
-      let curCol = col + dx;
-      let curHeight = this.height[col] + dx;
-      while (
-        curCol >= 0 &&
-        curCol < GameBoard.width &&
-        curHeight >= 0 &&
-        curHeight < GameBoard.height &&
-        this.gameBoard[curCol][curHeight] === currentPlayer
-      ) {
-        winCount++;
-        curCol += dx;
-        curHeight += dx;
-      }
-    }
-    if (winCount >= 3) {
-      return true;
-    }
-    //diagonal check negative
-    winCount = 0;
-    for (const dx of [-1, 1]) {
-      let curCol = col + dx;
-      let curHeight = this.height[col] - dx;
-      while (
-        curCol >= 0 &&
-        curCol < GameBoard.width &&
-        curHeight >= 0 &&
-        curHeight < GameBoard.height &&
-        this.gameBoard[curCol][curHeight] === currentPlayer
-      ) {
-        winCount++;
-        curCol += dx;
-        curHeight -= dx;
-      }
-    }
-    if (winCount >= 3) {
-      return true;
-    }
-    //TODO These 3 checks (or at least the diagonals) could be refactored into a loop (DRY)
-    return false;
   }
 
-  play(col: number) {
-    this.gameBoard[col][this.height[col]] = 1 + (this.moves % 2);
-    this.height[col]++;
-    this.moves++;
-    this.history = `${this.history}${(col + 1).toString()}`;
+  possibleMoves() {
+    return (this.mask + this.bottomMask) & this.boardMask;
   }
 
-  unplay(col: number) {
-    this.gameBoard[col][this.height[col] - 1] = 0;
-    this.height[col]--;
-    this.moves--;
-    this.history = this.history.slice(0, this.history.length - 1);
+  //helper fn returns a bitmap of all cells that could connect-4 for current player (may not be reachable)
+  getWinningPositions(position: bigint, mask: bigint) {
+    //vertical
+    let winningPositions =
+      (position << 1n) & (position << 2n) & (position << 3n);
+
+    //horizontal (check right)
+    let twoMatch =
+      (position << BigInt(GameBoard.height + 1)) &
+      (position << BigInt(2 * (GameBoard.height + 1)));
+    // match ...x
+    winningPositions |=
+      twoMatch & (position << BigInt(3 * (GameBoard.height + 1)));
+    // match ..x.
+    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 1));
+    //horizontal (check left)
+    twoMatch =
+      (position >> BigInt(GameBoard.height + 1)) &
+      (position >> BigInt(2 * (GameBoard.height + 1)));
+    //match x...
+    winningPositions |=
+      twoMatch & (position >> BigInt(3 * (GameBoard.height + 1)));
+    //match .x..
+    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 1));
+
+    //diagonal 1
+    twoMatch =
+      (position << BigInt(GameBoard.height)) &
+      (position << BigInt(2 * GameBoard.height));
+    // match ...x
+    winningPositions |= twoMatch & (position << BigInt(3 * GameBoard.height));
+    // match ..x.
+    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height));
+    //horizontal (check left)
+    twoMatch =
+      (position >> BigInt(GameBoard.height)) &
+      (position >> BigInt(2 * GameBoard.height));
+    //match x...
+    winningPositions |= twoMatch & (position >> BigInt(3 * GameBoard.height));
+    //match .x..
+    winningPositions |= twoMatch & (position << BigInt(GameBoard.height));
+
+    //diagonal 2
+    twoMatch =
+      (position << BigInt(GameBoard.height + 2)) &
+      (position << BigInt(2 * (GameBoard.height + 2)));
+    // match ...x
+    winningPositions |=
+      twoMatch & (position << BigInt(3 * (GameBoard.height + 2)));
+    // match ..x.
+    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 2));
+    //horizontal (check left)
+    twoMatch =
+      (position >> BigInt(GameBoard.height + 1)) &
+      (position >> BigInt(2 * (GameBoard.height + 2)));
+    //match x...
+    winningPositions |=
+      twoMatch & (position >> BigInt(3 * (GameBoard.height + 2)));
+    //match .x..
+    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 2));
+
+    return winningPositions & (this.boardMask ^ mask);
   }
 
-  printBoard() {
-    for (let i = GameBoard.height; i >= 0; i--) {
-      let printRow = [];
-      for (let j = 0; j < GameBoard.width; j++) {
-        printRow.push(this.gameBoard[j][i]);
+  //Return a bitmask of the possible winning positions for the current player (may not be reachable)
+  winningPositions() {
+    return this.getWinningPositions(this.currentPosition, this.mask);
+  }
+
+  //Return a bitmask of the possible winning positions for the opponent (may not be reachable)
+  opponentWinningPositions() {
+    return this.getWinningPositions(
+      this.mask ^ this.currentPosition,
+      this.mask
+    );
+  }
+  //to help with debugging 'X' is current player so about to move
+  printPosition() {
+    const curPlayer = this.currentPosition
+      .toString(2)
+      .split("")
+      .reverse()
+      .join("");
+    const opponent = (this.mask ^ this.currentPosition)
+      .toString(2)
+      .split("")
+      .reverse()
+      .join("");
+    let boardArray = Array.from({ length: GameBoard.height }, () =>
+      Array.from({ length: GameBoard.width }, () => ".")
+    );
+    for (let i = 0; i < GameBoard.width; i++) {
+      for (let j = 0; j < GameBoard.height + 1; j++) {
+        let curIndex = j + i * (GameBoard.height + 1);
+        if (curPlayer[curIndex] === "1") {
+          boardArray[j][i] = "X";
+        } else if (opponent[curIndex] === "1") {
+          boardArray[j][i] = "O";
+        }
       }
-      console.log(printRow.join(""));
     }
+    boardArray.reverse();
+    boardArray.forEach((row) => console.log(...row));
+    console.log("\nX to play");
+  }
+
+  //Evaluate a board
+
+  //helper fn to count cells
+  bitCount(position: bigint) {
+    let count = 0;
+    while (position > 0) {
+      if (position & 1n) {
+        count++;
+      }
+      position >>= 1n;
+    }
+    return count;
+  }
+
+  evaluatePosition() {
+    const blankSpace = this.boardMask ^ this.mask;
+    let position = this.currentPosition;
+    let twoCount = 0;
+    //count two stones that could be fours
+    //vertical
+    let verticalMask =
+      (position << 1n) & (position << 2n) & (blankSpace & (blankSpace >> 1n));
+    twoCount += this.bitCount(verticalMask);
+    console.log({ vert: this.bitCount(verticalMask) });
+
+    //horzontal
+    const horizShift = BigInt(GameBoard.height + 1);
+    // XX..
+    let horizontalMask =
+      (position << horizShift) &
+      (position << (2n * horizShift)) &
+      (blankSpace & (blankSpace >> horizShift));
+    twoCount += this.bitCount(horizontalMask);
+    console.log({ horizRight: this.bitCount(horizontalMask) });
+    //..XX
+    horizontalMask =
+      (position >> horizShift) &
+      (position >> (2n * horizShift)) &
+      (blankSpace & (blankSpace << horizShift));
+    twoCount += this.bitCount(horizontalMask);
+    console.log({ horizLeft: this.bitCount(horizontalMask) });
+    // .X.X. (test L/R ends individually)
+    let XOXmask =
+      (position << horizShift) & (position >> horizShift) & blankSpace;
+
+    horizontalMask = XOXmask & (blankSpace << (2n * horizShift));
+    twoCount += this.bitCount(horizontalMask);
+    console.log({ horizOXOX: this.bitCount(horizontalMask) });
+    horizontalMask = XOXmask & (blankSpace >> (2n * horizShift));
+    twoCount += this.bitCount(horizontalMask);
+    console.log({ horizXOXO: this.bitCount(horizontalMask) });
+    //X..X
+    horizontalMask =
+      position &
+      (position << (3n * horizShift)) &
+      ((blankSpace << horizShift) & (blankSpace << (2n * horizShift)));
+    twoCount += this.bitCount(horizontalMask);
+    console.log({ horizXOOX: this.bitCount(horizontalMask) });
   }
 }
 
-export { GameBoard };
+const test = new GameBoard("114455");
+test.evaluatePosition();
+test.printPosition();
 
-// const testBoard = new GameBoard("524653332256623414472524557673341711667");
-// for (let i = 0; i < 7; i++) {
-//   if (testBoard.canPlay(i)) console.log(testBoard.isWinningMove(i));
-// }
-// testBoard.printBoard();
+export { GameBoard };
