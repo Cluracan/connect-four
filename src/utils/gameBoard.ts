@@ -274,43 +274,67 @@ class GameBoard {
     twoCount += this.bitCount(verticalMask);
     console.log({ vert: this.bitCount(verticalMask) });
 
-    //horzontal
-    const horizShift = BigInt(GameBoard.height + 1);
-    // XX..
-    let horizontalMask =
-      (position << horizShift) &
-      (position << (2n * horizShift)) &
-      (blankSpace & (blankSpace >> horizShift));
-    twoCount += this.bitCount(horizontalMask);
-    console.log({ horizRight: this.bitCount(horizontalMask) });
-    //..XX
-    horizontalMask =
-      (position >> horizShift) &
-      (position >> (2n * horizShift)) &
-      (blankSpace & (blankSpace << horizShift));
-    twoCount += this.bitCount(horizontalMask);
-    console.log({ horizLeft: this.bitCount(horizontalMask) });
-    // .X.X. (test L/R ends individually)
-    let XOXmask =
-      (position << horizShift) & (position >> horizShift) & blankSpace;
-
-    horizontalMask = XOXmask & (blankSpace << (2n * horizShift));
-    twoCount += this.bitCount(horizontalMask);
-    console.log({ horizOXOX: this.bitCount(horizontalMask) });
-    horizontalMask = XOXmask & (blankSpace >> (2n * horizShift));
-    twoCount += this.bitCount(horizontalMask);
-    console.log({ horizXOXO: this.bitCount(horizontalMask) });
-    //X..X
-    horizontalMask =
-      position &
-      (position << (3n * horizShift)) &
-      ((blankSpace << horizShift) & (blankSpace << (2n * horizShift)));
-    twoCount += this.bitCount(horizontalMask);
-    console.log({ horizXOOX: this.bitCount(horizontalMask) });
+    //horzontal & diagonal (DRY)
+    /*  
+    height    : Diagonal 2 \
+    height + 1: Horizontal -
+    height + 2: Diagonal 1 /
+    */
+    for (const shift of [
+      BigInt(GameBoard.height),
+      BigInt(GameBoard.height + 1),
+      BigInt(GameBoard.height + 2),
+    ]) {
+      console.log(
+        `${
+          shift === BigInt(GameBoard.height)
+            ? "Diagonal \\"
+            : shift === BigInt(GameBoard.height + 1)
+            ? "Horizontal"
+            : "Diagonal /"
+        }`
+      );
+      // XX..
+      let fourMatch =
+        (position << shift) &
+        (position << (2n * shift)) &
+        (blankSpace & (blankSpace >> shift));
+      twoCount += this.bitCount(fourMatch);
+      console.log({ matchRight: this.bitCount(fourMatch) });
+      //..XX
+      fourMatch =
+        (position >> shift) &
+        (position >> (2n * shift)) &
+        (blankSpace & (blankSpace << shift));
+      twoCount += this.bitCount(fourMatch);
+      console.log({ matchLeft: this.bitCount(fourMatch) });
+      // .X.X. (test L/R ends individually)
+      let XOXmask = (position << shift) & (position >> shift) & blankSpace;
+      fourMatch = XOXmask & (blankSpace << (2n * shift));
+      twoCount += this.bitCount(fourMatch);
+      console.log({ matchOXOX: this.bitCount(fourMatch) });
+      fourMatch = XOXmask & (blankSpace >> (2n * shift));
+      twoCount += this.bitCount(fourMatch);
+      console.log({ matchXOXO: this.bitCount(fourMatch) });
+      //X..X
+      fourMatch =
+        position &
+        (position << (3n * shift)) &
+        ((blankSpace << shift) & (blankSpace << (2n * shift)));
+      twoCount += this.bitCount(fourMatch);
+      console.log({ matchXOOX: this.bitCount(fourMatch) });
+      //.XX.
+      fourMatch =
+        (position << shift) &
+        (position << (2n * shift)) &
+        (blankSpace & (blankSpace << (3n * shift)));
+      twoCount += this.bitCount(fourMatch);
+      console.log({ matchOXXO: this.bitCount(fourMatch) });
+    }
   }
 }
 
-const test = new GameBoard("114455");
+const test = new GameBoard("1125261");
 test.evaluatePosition();
 test.printPosition();
 
