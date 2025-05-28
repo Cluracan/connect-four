@@ -100,7 +100,7 @@ class GameBoard {
   // Indicates whether the current player wins by playing a given column.
   isWinningColumn(col: number) {
     return (
-      (this.winningPositions() &
+      (this.playerWinningPositions() &
         this.possibleMoves() &
         this.columnMask(col)) !==
       0n
@@ -143,7 +143,7 @@ class GameBoard {
     return (this.mask + this.bottomMask) & this.boardMask;
   }
 
-  //helper fn returns a bitmap of all cells that could connect-4 for current player (may not be reachable)
+  //helper fn returns a bitmap of all cells that could connect-4 for a given position (may not be reachable)
   getWinningPositions(position: bigint, mask: bigint) {
     //vertical
     let winningPositions =
@@ -208,7 +208,7 @@ class GameBoard {
   }
 
   //Return a bitmask of the possible winning positions for the current player (may not be reachable)
-  winningPositions() {
+  playerWinningPositions() {
     return this.getWinningPositions(this.currentPosition, this.mask);
   }
 
@@ -218,6 +218,16 @@ class GameBoard {
       this.mask ^ this.currentPosition,
       this.mask
     );
+  }
+
+  playerCanWin() {
+    return (this.playerWinningPositions() & this.possibleMoves()) !== 0n;
+  }
+  // opponent has to have two posible winning moves to guarantee win
+  opponentCanWin() {
+    const opponentWinningPositions =
+      this.opponentWinningPositions() & this.possibleMoves();
+    return this.bitCount(opponentWinningPositions) > 1;
   }
   //to help with debugging 'X' is current player so about to move
   printPosition() {
@@ -261,6 +271,19 @@ class GameBoard {
       position >>= 1n;
     }
     return count;
+  }
+
+  getEvaluation() {
+    if (this.playerCanWin()) {
+      return Infinity;
+    }
+    if (this.opponentCanWin()) {
+      return -Infinity;
+    }
+    return (
+      this.evaluatePosition(this.currentPosition) -
+      this.evaluatePosition(this.mask ^ this.currentPosition)
+    );
   }
 
   evaluatePosition(position: bigint) {
@@ -334,11 +357,14 @@ class GameBoard {
       this.getWinningPositions(position, this.mask)
     );
     console.log({ threeCount });
+    return threeCount ** 2 + twoCount;
   }
 }
 
-const test = new GameBoard("112526156564441");
-test.evaluatePosition(test.currentPosition);
+const test = new GameBoard("1125261565644412621");
 test.printPosition();
-test.evaluatePosition(test.mask ^ test.currentPosition);
+console.log(test.getEvaluation());
+test.printPosition();
+console.log({ playerCanWin: test.playerCanWin() });
+console.log({ opponentCanWin: test.opponentCanWin() });
 export { GameBoard };
