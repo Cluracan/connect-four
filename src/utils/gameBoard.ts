@@ -69,7 +69,7 @@ class GameBoard {
   boardMask: bigint;
   currentPosition: bigint;
   moveCount: number;
-  constructor(moveInput: string) {
+  constructor(moveInput: string = "") {
     this.mask = 0n;
     this.currentPosition = 0n;
     this.bottomMask = generateBottomMask(GameBoard.width, GameBoard.height);
@@ -119,6 +119,13 @@ class GameBoard {
     this.mask |= move;
     this.moveCount++;
   }
+
+  undoMove(move: bigint) {
+    this.mask ^= move;
+    this.currentPosition ^= this.mask;
+    this.moveCount--;
+  }
+
   //TODO - alter to 0 based once testing done?
   //moveInput is a 1 - based index of the board (for testing)
   initialiseBoard(moveInput: string) {
@@ -149,61 +156,34 @@ class GameBoard {
     let winningPositions =
       (position << 1n) & (position << 2n) & (position << 3n);
 
-    //horizontal (check right)
-    let twoMatch =
-      (position << BigInt(GameBoard.height + 1)) &
-      (position << BigInt(2 * (GameBoard.height + 1)));
-    // match ...x
-    winningPositions |=
-      twoMatch & (position << BigInt(3 * (GameBoard.height + 1)));
-    // match ..x.
-    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 1));
-    //horizontal (check left)
-    twoMatch =
-      (position >> BigInt(GameBoard.height + 1)) &
-      (position >> BigInt(2 * (GameBoard.height + 1)));
-    //match x...
-    winningPositions |=
-      twoMatch & (position >> BigInt(3 * (GameBoard.height + 1)));
-    //match .x..
-    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 1));
-
-    //diagonal 1
-    twoMatch =
-      (position << BigInt(GameBoard.height)) &
-      (position << BigInt(2 * GameBoard.height));
-    // match ...x
-    winningPositions |= twoMatch & (position << BigInt(3 * GameBoard.height));
-    // match ..x.
-    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height));
-    //horizontal (check left)
-    twoMatch =
-      (position >> BigInt(GameBoard.height)) &
-      (position >> BigInt(2 * GameBoard.height));
-    //match x...
-    winningPositions |= twoMatch & (position >> BigInt(3 * GameBoard.height));
-    //match .x..
-    winningPositions |= twoMatch & (position << BigInt(GameBoard.height));
-
-    //diagonal 2
-    twoMatch =
-      (position << BigInt(GameBoard.height + 2)) &
-      (position << BigInt(2 * (GameBoard.height + 2)));
-    // match ...x
-    winningPositions |=
-      twoMatch & (position << BigInt(3 * (GameBoard.height + 2)));
-    // match ..x.
-    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 2));
-    //horizontal (check left)
-    twoMatch =
-      (position >> BigInt(GameBoard.height + 1)) &
-      (position >> BigInt(2 * (GameBoard.height + 2)));
-    //match x...
-    winningPositions |=
-      twoMatch & (position >> BigInt(3 * (GameBoard.height + 2)));
-    //match .x..
-    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 2));
-
+    //horzontal & diagonal (DRY)
+    //height    : Diagonal 2 \
+    //height + 1: Horizontal -
+    //height + 2: Diagonal 1 /
+    for (const shift of [
+      BigInt(GameBoard.height),
+      BigInt(GameBoard.height + 1),
+      BigInt(GameBoard.height + 2),
+    ]) {
+      //  XXX.
+      winningPositions |=
+        (position << shift) &
+        (position << (2n * shift)) &
+        (position << (3n * shift));
+      //  XX.X
+      winningPositions |=
+        (position << shift) & (position << (2n * shift)) & (position >> shift);
+      //  X.XX
+      winningPositions |=
+        (position << shift) &
+        (position >> (2n * shift)) &
+        (position >> (3n * shift));
+      //  .XXX
+      winningPositions |=
+        (position >> shift) &
+        (position >> (2n * shift)) &
+        (position >> (3n * shift));
+    }
     return winningPositions & (this.boardMask ^ mask);
   }
 
@@ -220,14 +200,12 @@ class GameBoard {
     );
   }
 
-  playerCanWin() {
-    return (this.playerWinningPositions() & this.possibleMoves()) !== 0n;
+  playerWinningMoves() {
+    return this.playerWinningPositions() & this.possibleMoves();
   }
-  // opponent has to have two posible winning moves to guarantee win
-  opponentCanWin() {
-    const opponentWinningPositions =
-      this.opponentWinningPositions() & this.possibleMoves();
-    return this.bitCount(opponentWinningPositions) > 1;
+  // returns current winning moves (which can then be blocked by curplayer)
+  opponentWinningMoves() {
+    return this.opponentWinningPositions() & this.possibleMoves();
   }
   //to help with debugging 'X' is current player so about to move
   printPosition() {
@@ -241,7 +219,7 @@ class GameBoard {
       .split("")
       .reverse()
       .join("");
-    let boardArray = Array.from({ length: GameBoard.height }, () =>
+    let boardArray = Array.from({ length: GameBoard.height + 1 }, () =>
       Array.from({ length: GameBoard.width }, () => ".")
     );
     for (let i = 0; i < GameBoard.width; i++) {
@@ -274,12 +252,35 @@ class GameBoard {
   }
 
   getEvaluation() {
-    if (this.playerCanWin()) {
+    //draw (if following a forced line)
+    if (this.bitCount(this.possibleMoves()) === 0) {
+      return 0;
+    }
+    //player win
+    if (this.bitCount(this.playerWinningMoves()) !== 0) {
       return Infinity;
     }
-    if (this.opponentCanWin()) {
+    //opponent win (forced)
+    if (this.bitCount(this.opponentWinningMoves()) > 1) {
       return -Infinity;
     }
+    //follow a forced line
+    let forcedMove = 0n;
+    if (this.bitCount(this.possibleMoves()) === 1) {
+      console.log("only 1 available move");
+      forcedMove = this.possibleMoves();
+    } else if (this.bitCount(this.opponentWinningMoves()) === 1) {
+      console.log("must block opponent");
+      console.log(this.opponentWinningMoves());
+      forcedMove = this.opponentWinningMoves();
+    }
+    if (forcedMove > 0n) {
+      this.playMove(forcedMove);
+      let score: number = -this.getEvaluation();
+      this.undoMove(forcedMove);
+      return score;
+    }
+
     return (
       this.evaluatePosition(this.currentPosition) -
       this.evaluatePosition(this.mask ^ this.currentPosition)
@@ -357,14 +358,74 @@ class GameBoard {
       this.getWinningPositions(position, this.mask)
     );
     console.log({ threeCount });
+
     return threeCount ** 2 + twoCount;
   }
 }
 
-const test = new GameBoard("1125261565644412621");
+const test = new GameBoard("23163416124767223154467471272416755633");
 test.printPosition();
+// test.playColumn(6);
+// test.printPosition();
 console.log(test.getEvaluation());
-test.printPosition();
-console.log({ playerCanWin: test.playerCanWin() });
-console.log({ opponentCanWin: test.opponentCanWin() });
 export { GameBoard };
+
+/*
+   let twoMatch =
+      (position << BigInt(GameBoard.height + 1)) &
+      (position << BigInt(2 * (GameBoard.height + 1)));
+    // match ...x
+    winningPositions |=
+      twoMatch & (position << BigInt(3 * (GameBoard.height + 1)));
+    console.log(`h ...x ${winningPositions & this.possibleMoves()}`);
+    // match ..x.
+    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 1));
+    console.log(`h ..x. ${winningPositions & this.possibleMoves()}`);
+    //horizontal (check left)
+    twoMatch =
+      (position >> BigInt(GameBoard.height + 1)) &
+      (position >> BigInt(2 * (GameBoard.height + 1)));
+    //match x...
+    winningPositions |=
+      twoMatch & (position >> BigInt(3 * (GameBoard.height + 1)));
+    console.log(`h x... ${winningPositions & this.possibleMoves()}`);
+    //match .x..
+    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 1));
+    console.log(`h .x.. ${winningPositions & this.possibleMoves()}`);
+    //diagonal 1
+    twoMatch =
+      (position << BigInt(GameBoard.height)) &
+      (position << BigInt(2 * GameBoard.height));
+    // match ...x
+    winningPositions |= twoMatch & (position << BigInt(3 * GameBoard.height));
+    // match ..x.
+    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height));
+    //horizontal (check left)
+    twoMatch =
+      (position >> BigInt(GameBoard.height)) &
+      (position >> BigInt(2 * GameBoard.height));
+    //match x...
+    winningPositions |= twoMatch & (position >> BigInt(3 * GameBoard.height));
+    //match .x..
+    winningPositions |= twoMatch & (position << BigInt(GameBoard.height));
+    console.log(`diag ${winningPositions & this.possibleMoves()}`);
+    //diagonal 2
+    twoMatch =
+      (position << BigInt(GameBoard.height + 2)) &
+      (position << BigInt(2 * (GameBoard.height + 2)));
+    // match ...x
+    winningPositions |=
+      twoMatch & (position << BigInt(3 * (GameBoard.height + 2)));
+    // match ..x.
+    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 2));
+    //horizontal (check left)
+    twoMatch =
+      (position >> BigInt(GameBoard.height + 1)) &
+      (position >> BigInt(2 * (GameBoard.height + 2)));
+    //match x...
+    winningPositions |=
+      twoMatch & (position >> BigInt(3 * (GameBoard.height + 2)));
+    //match .x..
+    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 2));
+    console.log(`diag ${winningPositions & this.possibleMoves()}`);
+*/
