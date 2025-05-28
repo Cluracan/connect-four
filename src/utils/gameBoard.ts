@@ -140,6 +140,13 @@ class GameBoard {
         console.error(
           `Error in initial input string ${moveInput} at ${moveInput[i]}`
         );
+        if (!this.canPlay(col)) {
+          console.log("Cannot play col");
+        }
+        if (this.isWinningColumn(col)) {
+          console.log(`Col ${col} is winning`);
+        }
+
         break;
       }
       this.playColumn(col);
@@ -152,9 +159,10 @@ class GameBoard {
 
   //helper fn returns a bitmap of all cells that could connect-4 for a given position (may not be reachable)
   getWinningPositions(position: bigint, mask: bigint) {
+    let blankSpace = this.boardMask ^ this.mask;
     //vertical
     let winningPositions =
-      (position << 1n) & (position << 2n) & (position << 3n);
+      (position << 1n) & (position << 2n) & (position << 3n) & blankSpace;
 
     //horzontal & diagonal (DRY)
     //height    : Diagonal 2 \
@@ -169,21 +177,88 @@ class GameBoard {
       winningPositions |=
         (position << shift) &
         (position << (2n * shift)) &
-        (position << (3n * shift));
+        ((position << (3n * shift)) & blankSpace);
+      if (winningPositions !== 0n) {
+        console.log(position.toString(2));
+        console.log(
+          ((position << shift) & (position << (2n * shift))).toString(2)
+        );
+        console.log(
+          `win 1 on ${
+            shift === 6n
+              ? "diag /"
+              : shift === 7n
+              ? "horiz"
+              : shift === 8n
+              ? "diag \\"
+              : "oops"
+          }`
+        );
+        console.log((winningPositions & this.possibleMoves()).toString(2));
+      }
       //  XX.X
       winningPositions |=
-        (position << shift) & (position << (2n * shift)) & (position >> shift);
+        (position << shift) &
+        (position << (2n * shift)) &
+        (position >> shift) &
+        blankSpace;
+      if (winningPositions !== 0n) {
+        console.log(
+          `win 2 on ${
+            shift === 6n
+              ? "diag /"
+              : shift === 7n
+              ? "horiz"
+              : shift === 8n
+              ? "diag \\"
+              : "oops"
+          }`
+        );
+      }
       //  X.XX
       winningPositions |=
         (position << shift) &
-        (position >> (2n * shift)) &
-        (position >> (3n * shift));
+        (position >> shift) &
+        ((position >> (2n * shift)) & blankSpace);
+      if (winningPositions !== 0n) {
+        console.log(
+          `win 3 on ${
+            shift === 6n
+              ? "diag /"
+              : shift === 7n
+              ? "horiz"
+              : shift === 8n
+              ? "diag \\"
+              : "oops"
+          }`
+        );
+      }
       //  .XXX
       winningPositions |=
         (position >> shift) &
         (position >> (2n * shift)) &
-        (position >> (3n * shift));
+        (position >> (3n * shift)) &
+        blankSpace;
+      if (winningPositions !== 0n) {
+        console.log(
+          `win 4 on ${
+            shift === 6n
+              ? "diag /"
+              : shift === 7n
+              ? "horiz"
+              : shift === 8n
+              ? "diag \\"
+              : "oops"
+          }`
+        );
+      }
     }
+    console.log(
+      `getWinningPositions returns ${(
+        winningPositions &
+        (this.boardMask ^ mask)
+      ).toString(2)}`
+    );
     return winningPositions & (this.boardMask ^ mask);
   }
 
@@ -363,11 +438,11 @@ class GameBoard {
   }
 }
 
-const test = new GameBoard("23163416124767223154467471272416755633");
+const test = new GameBoard("71255763773133525731261364622167124446454");
 test.printPosition();
 // test.playColumn(6);
 // test.printPosition();
-console.log(test.getEvaluation());
+// console.log(test.getEvaluation());
 export { GameBoard };
 
 /*
