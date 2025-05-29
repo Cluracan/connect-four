@@ -8,7 +8,7 @@ import { PonsBitBoard } from "../utils/ponsBitBoard";
 import { readFileSync } from "fs";
 
 const endEasyData = readFileSync(
-  "./src/tests/negamax-data/Test_L3_R1",
+  "./src/tests/negamax-data/Test_L2_R1",
   "utf-8"
 );
 const endEasyTests = endEasyData

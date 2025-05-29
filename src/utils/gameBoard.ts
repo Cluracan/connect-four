@@ -309,10 +309,10 @@ class GameBoard {
     //check for a forced line
     let forcedMove = 0n;
     if (this.bitCount(this.possibleMoves()) === 1) {
-      console.log("only 1 available move");
+      // console.log("only 1 available move");
       forcedMove = this.possibleMoves();
     } else if (this.bitCount(this.opponentWinningMoves()) === 1) {
-      console.log("must block opponent");
+      // console.log("must block opponent");
       forcedMove = this.opponentWinningMoves();
     }
     if (forcedMove > 0n) {
@@ -336,7 +336,7 @@ class GameBoard {
     let verticalMask =
       (position << 1n) & (position << 2n) & (blankSpace & (blankSpace >> 1n));
     twoCount += this.bitCount(verticalMask);
-    console.log({ vert: this.bitCount(verticalMask) });
+    // console.log({ vert: this.bitCount(verticalMask) });
 
     //horzontal & diagonal (DRY)
     /*  
@@ -349,66 +349,64 @@ class GameBoard {
       BigInt(GameBoard.height + 1),
       BigInt(GameBoard.height + 2),
     ]) {
-      console.log(
-        `${
-          shift === BigInt(GameBoard.height)
-            ? "Diagonal \\"
-            : shift === BigInt(GameBoard.height + 1)
-            ? "Horizontal"
-            : "Diagonal /"
-        }`
-      );
+      // console.log(
+      //   `${
+      //     shift === BigInt(GameBoard.height)
+      //       ? "Diagonal \\"
+      //       : shift === BigInt(GameBoard.height + 1)
+      //       ? "Horizontal"
+      //       : "Diagonal /"
+      //   }`
+      // );
       // XX..
       let fourMatch =
         (position << shift) &
         (position << (2n * shift)) &
         (blankSpace & (blankSpace >> shift));
       twoCount += this.bitCount(fourMatch);
-      console.log({ matchRight: this.bitCount(fourMatch) });
+      // console.log({ matchRight: this.bitCount(fourMatch) });
       //..XX
       fourMatch =
         (position >> shift) &
         (position >> (2n * shift)) &
         (blankSpace & (blankSpace << shift));
       twoCount += this.bitCount(fourMatch);
-      console.log({ matchLeft: this.bitCount(fourMatch) });
+      // console.log({ matchLeft: this.bitCount(fourMatch) });
       // .X.X. (test L/R ends individually)
       let XOXmask = (position << shift) & (position >> shift) & blankSpace;
       fourMatch = XOXmask & (blankSpace << (2n * shift));
       twoCount += this.bitCount(fourMatch);
-      console.log({ matchOXOX: this.bitCount(fourMatch) });
+      // console.log({ matchOXOX: this.bitCount(fourMatch) });
       fourMatch = XOXmask & (blankSpace >> (2n * shift));
       twoCount += this.bitCount(fourMatch);
-      console.log({ matchXOXO: this.bitCount(fourMatch) });
+      // console.log({ matchXOXO: this.bitCount(fourMatch) });
       //X..X
       fourMatch =
         position &
         (position << (3n * shift)) &
         ((blankSpace << shift) & (blankSpace << (2n * shift)));
       twoCount += this.bitCount(fourMatch);
-      console.log({ matchXOOX: this.bitCount(fourMatch) });
+      // console.log({ matchXOOX: this.bitCount(fourMatch) });
       //.XX.
       fourMatch =
         (position << shift) &
         (position << (2n * shift)) &
         (blankSpace & (blankSpace << (3n * shift)));
       twoCount += this.bitCount(fourMatch);
-      console.log({ matchOXXO: this.bitCount(fourMatch) });
+      // console.log({ matchOXXO: this.bitCount(fourMatch) });
     }
     let threeCount = this.bitCount(
       this.getWinningPositions(position, this.mask)
     );
-    console.log({ threeCount });
+    // console.log({ threeCount });
 
     return threeCount ** 2 + twoCount;
   }
 }
 
-const test = new GameBoard("61151145221126576476226744257647");
-test.printPosition();
+// const test = new GameBoard("61151145221126576476226744257647");
+// test.printPosition();
 // test.playColumn(6);
 // test.printPosition();
 // console.log(test.getEvaluation());
 export { GameBoard };
-
-console.log(negamax(test, 2, -Infinity, Infinity));

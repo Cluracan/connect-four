@@ -19,10 +19,14 @@ const negamax = (
       case "EXACT":
         return ttEntry.value;
       case "LOWERBOUND":
-        if (ttEntry.value >= beta) return ttEntry.value;
+        if (ttEntry.value >= beta) {
+          return ttEntry.value;
+        }
         break;
       case "UPPERBOUND":
-        if (ttEntry.value <= alpha) return ttEntry.value;
+        if (ttEntry.value <= alpha) {
+          return ttEntry.value;
+        }
     }
   }
   if (
