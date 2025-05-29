@@ -1,57 +1,7 @@
-/**
- * A class storing a Connect 4 position.
- * Functions are relative to the current player to play.
- *
- * A binary bitboard representation is used.
- * Each column is encoded on HEIGHT+1 bits.
- *
- * Bit order to encode for a 7x6 board
- * .  .  .  .  .  .  .
- * 5 12 19 26 33 40 47
- * 4 11 18 25 32 39 46
- * 3 10 17 24 31 38 45
- * 2  9 16 23 30 37 44
- * 1  8 15 22 29 36 43
- * 0  7 14 21 28 35 42
- *
- * Position is stored as
- * - a bitboard "mask" with 1 on any color stones
- * - a bitboard "current_player" with 1 on stones of current player
- *
- * "current_player" bitboard can be transformed into a compact and non ambiguous key
- * by adding an extra bit on top of the last non empty cell of each column.
- * This allow to identify all the empty cells whithout needing "mask" bitboard
- *
- * current_player "x" = 1, opponent "o" = 0
- * board     position  mask      key       bottom
- *           0000000   0000000   0000000   0000000
- * .......   0000000   0000000   0001000   0000000
- * ...o...   0000000   0001000   0010000   0000000
- * ..xx...   0011000   0011000   0011000   0000000
- * ..ox...   0001000   0011000   0001100   0000000
- * ..oox..   0000100   0011100   0000110   0000000
- * ..oxxo.   0001100   0011110   1101101   1111111
- *
- * current_player "o" = 1, opponent "x" = 0
- * board     position  mask      key       bottom
- *           0000000   0000000   0001000   0000000
- * ...x...   0000000   0001000   0000000   0000000
- * ...o...   0001000   0001000   0011000   0000000
- * ..xx...   0000000   0011000   0000000   0000000
- * ..ox...   0010000   0011000   0010100   0000000
- * ..oox..   0011000   0011100   0011010   0000000
- * ..oxxo.   0010010   0011110   1110011   1111111
- *
- * key is an unique representation of a board key = position + mask + bottom
- * in practice, as bottom is constant, key = position + mask is also a
- * non-ambigous representation of the position.
- */
+// Derived from Pascal Pons connect four blog - a few weeks to get my head round it then implemented this version
 
-/**
- * Generate a bitmask containing one for the bottom slot of each colum
- * must be defined outside of the class definition to be available at compile time for bottom_mask
- * recursive fn where height+1 creates the 7-step in positions and you push (OR) single 1's into the value
- */
+import { negamax } from "./negamax";
+
 const generateBottomMask = (width: number, height: number): bigint => {
   return width === 0
     ? 0n
@@ -91,6 +41,10 @@ class GameBoard {
   // return a bitmask containg a single 1 corresponding to the bottom cell of a given column
   columnBottomMask = (col: number) => {
     return 1n << BigInt(col * (GameBoard.height + 1));
+  };
+
+  key = () => {
+    return this.currentPosition + this.mask;
   };
 
   canPlay(col: number) {
@@ -178,93 +132,102 @@ class GameBoard {
         (position << shift) &
         (position << (2n * shift)) &
         ((position << (3n * shift)) & blankSpace);
-      if (winningPositions !== 0n) {
-        console.log(position.toString(2));
-        console.log(
-          ((position << shift) & (position << (2n * shift))).toString(2)
-        );
-        console.log(
-          `win 1 on ${
-            shift === 6n
-              ? "diag /"
-              : shift === 7n
-              ? "horiz"
-              : shift === 8n
-              ? "diag \\"
-              : "oops"
-          }`
-        );
-        console.log((winningPositions & this.possibleMoves()).toString(2));
-      }
+      // if (winningPositions !== 0n) {
+      //   console.log(position.toString(2));
+      //   console.log(
+      //     ((position << shift) & (position << (2n * shift))).toString(2)
+      //   );
+      //   console.log(
+      //     `win 1 on ${
+      //       shift === 6n
+      //         ? "diag /"
+      //         : shift === 7n
+      //         ? "horiz"
+      //         : shift === 8n
+      //         ? "diag \\"
+      //         : "oops"
+      //     }`
+      //   );
+      //   console.log((winningPositions & this.possibleMoves()).toString(2));
+      // }
       //  XX.X
       winningPositions |=
         (position << shift) &
         (position << (2n * shift)) &
         (position >> shift) &
         blankSpace;
-      if (winningPositions !== 0n) {
-        console.log(
-          `win 2 on ${
-            shift === 6n
-              ? "diag /"
-              : shift === 7n
-              ? "horiz"
-              : shift === 8n
-              ? "diag \\"
-              : "oops"
-          }`
-        );
-      }
+      // if (winningPositions !== 0n) {
+      //   console.log(
+      //     `win 2 on ${
+      //       shift === 6n
+      //         ? "diag /"
+      //         : shift === 7n
+      //         ? "horiz"
+      //         : shift === 8n
+      //         ? "diag \\"
+      //         : "oops"
+      //     }`
+      //   );
+      // }
       //  X.XX
       winningPositions |=
         (position << shift) &
         (position >> shift) &
         ((position >> (2n * shift)) & blankSpace);
-      if (winningPositions !== 0n) {
-        console.log(
-          `win 3 on ${
-            shift === 6n
-              ? "diag /"
-              : shift === 7n
-              ? "horiz"
-              : shift === 8n
-              ? "diag \\"
-              : "oops"
-          }`
-        );
-      }
+      // if (winningPositions !== 0n) {
+      //   console.log(
+      //     `win 3 on ${
+      //       shift === 6n
+      //         ? "diag /"
+      //         : shift === 7n
+      //         ? "horiz"
+      //         : shift === 8n
+      //         ? "diag \\"
+      //         : "oops"
+      //     }`
+      //   );
+      // }
       //  .XXX
       winningPositions |=
         (position >> shift) &
         (position >> (2n * shift)) &
         (position >> (3n * shift)) &
         blankSpace;
-      if (winningPositions !== 0n) {
-        console.log(
-          `win 4 on ${
-            shift === 6n
-              ? "diag /"
-              : shift === 7n
-              ? "horiz"
-              : shift === 8n
-              ? "diag \\"
-              : "oops"
-          }`
-        );
-      }
+      // if (winningPositions !== 0n) {
+      //   console.log(
+      //     `win 4 on ${
+      //       shift === 6n
+      //         ? "diag /"
+      //         : shift === 7n
+      //         ? "horiz"
+      //         : shift === 8n
+      //         ? "diag \\"
+      //         : "oops"
+      //     }`
+      //   );
+      // }
     }
-    console.log(
-      `getWinningPositions returns ${(
-        winningPositions &
-        (this.boardMask ^ mask)
-      ).toString(2)}`
-    );
+    // console.log(
+    //   `getWinningPositions returns ${(
+    //     winningPositions &
+    //     (this.boardMask ^ mask)
+    //   ).toString(2)}`
+    // );
     return winningPositions & (this.boardMask ^ mask);
   }
 
   //Return a bitmask of the possible winning positions for the current player (may not be reachable)
   playerWinningPositions() {
     return this.getWinningPositions(this.currentPosition, this.mask);
+  }
+
+  // returns currently-playable winning moves
+  playerWinningMoves() {
+    return this.playerWinningPositions() & this.possibleMoves();
+  }
+
+  playerForcedWin() {
+    return this.bitCount(this.playerWinningMoves()) !== 0;
   }
 
   //Return a bitmask of the possible winning positions for the opponent (may not be reachable)
@@ -275,13 +238,20 @@ class GameBoard {
     );
   }
 
-  playerWinningMoves() {
-    return this.playerWinningPositions() & this.possibleMoves();
-  }
-  // returns current winning moves (which can then be blocked by curplayer)
+  // returns currently-playable opponent winning moves (which can then be blocked by curplayer)
   opponentWinningMoves() {
     return this.opponentWinningPositions() & this.possibleMoves();
   }
+
+  //opponent must have 2 distinct wins so curPlayer can't block
+  opponentForcedWin() {
+    return this.bitCount(this.opponentWinningMoves()) > 1;
+  }
+
+  drawnGame() {
+    return this.possibleMoves() === 0n;
+  }
+
   //to help with debugging 'X' is current player so about to move
   printPosition() {
     const curPlayer = this.currentPosition
@@ -327,26 +297,22 @@ class GameBoard {
   }
 
   getEvaluation() {
-    //draw (if following a forced line)
-    if (this.bitCount(this.possibleMoves()) === 0) {
+    if (this.drawnGame()) {
       return 0;
     }
-    //player win
-    if (this.bitCount(this.playerWinningMoves()) !== 0) {
+    if (this.playerForcedWin()) {
       return Infinity;
     }
-    //opponent win (forced)
-    if (this.bitCount(this.opponentWinningMoves()) > 1) {
+    if (this.opponentForcedWin()) {
       return -Infinity;
     }
-    //follow a forced line
+    //check for a forced line
     let forcedMove = 0n;
     if (this.bitCount(this.possibleMoves()) === 1) {
       console.log("only 1 available move");
       forcedMove = this.possibleMoves();
     } else if (this.bitCount(this.opponentWinningMoves()) === 1) {
       console.log("must block opponent");
-      console.log(this.opponentWinningMoves());
       forcedMove = this.opponentWinningMoves();
     }
     if (forcedMove > 0n) {
@@ -355,7 +321,7 @@ class GameBoard {
       this.undoMove(forcedMove);
       return score;
     }
-
+    //otherwise calculate a score
     return (
       this.evaluatePosition(this.currentPosition) -
       this.evaluatePosition(this.mask ^ this.currentPosition)
@@ -438,69 +404,11 @@ class GameBoard {
   }
 }
 
-const test = new GameBoard("71255763773133525731261364622167124446454");
+const test = new GameBoard("61151145221126576476226744257647");
 test.printPosition();
 // test.playColumn(6);
 // test.printPosition();
 // console.log(test.getEvaluation());
 export { GameBoard };
 
-/*
-   let twoMatch =
-      (position << BigInt(GameBoard.height + 1)) &
-      (position << BigInt(2 * (GameBoard.height + 1)));
-    // match ...x
-    winningPositions |=
-      twoMatch & (position << BigInt(3 * (GameBoard.height + 1)));
-    console.log(`h ...x ${winningPositions & this.possibleMoves()}`);
-    // match ..x.
-    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 1));
-    console.log(`h ..x. ${winningPositions & this.possibleMoves()}`);
-    //horizontal (check left)
-    twoMatch =
-      (position >> BigInt(GameBoard.height + 1)) &
-      (position >> BigInt(2 * (GameBoard.height + 1)));
-    //match x...
-    winningPositions |=
-      twoMatch & (position >> BigInt(3 * (GameBoard.height + 1)));
-    console.log(`h x... ${winningPositions & this.possibleMoves()}`);
-    //match .x..
-    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 1));
-    console.log(`h .x.. ${winningPositions & this.possibleMoves()}`);
-    //diagonal 1
-    twoMatch =
-      (position << BigInt(GameBoard.height)) &
-      (position << BigInt(2 * GameBoard.height));
-    // match ...x
-    winningPositions |= twoMatch & (position << BigInt(3 * GameBoard.height));
-    // match ..x.
-    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height));
-    //horizontal (check left)
-    twoMatch =
-      (position >> BigInt(GameBoard.height)) &
-      (position >> BigInt(2 * GameBoard.height));
-    //match x...
-    winningPositions |= twoMatch & (position >> BigInt(3 * GameBoard.height));
-    //match .x..
-    winningPositions |= twoMatch & (position << BigInt(GameBoard.height));
-    console.log(`diag ${winningPositions & this.possibleMoves()}`);
-    //diagonal 2
-    twoMatch =
-      (position << BigInt(GameBoard.height + 2)) &
-      (position << BigInt(2 * (GameBoard.height + 2)));
-    // match ...x
-    winningPositions |=
-      twoMatch & (position << BigInt(3 * (GameBoard.height + 2)));
-    // match ..x.
-    winningPositions |= twoMatch & (position >> BigInt(GameBoard.height + 2));
-    //horizontal (check left)
-    twoMatch =
-      (position >> BigInt(GameBoard.height + 1)) &
-      (position >> BigInt(2 * (GameBoard.height + 2)));
-    //match x...
-    winningPositions |=
-      twoMatch & (position >> BigInt(3 * (GameBoard.height + 2)));
-    //match .x..
-    winningPositions |= twoMatch & (position << BigInt(GameBoard.height + 2));
-    console.log(`diag ${winningPositions & this.possibleMoves()}`);
-*/
+console.log(negamax(test, 2, -Infinity, Infinity));

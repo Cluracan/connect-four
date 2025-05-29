@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { negamax } from "../utils/negamax";
-import { GameBoard } from "../utils/gameArrayBoard";
+import { GameBoard } from "../utils/gameBoard";
 import { negaBITmax, bitSolve } from "../utils/negaBITmax";
 import { GameBitBoard } from "../utils/gameBitBoard";
 import { ponsNegamax, ponsSolve } from "../utils/ponsNegamax";
@@ -29,10 +29,10 @@ const endEasyTests = endEasyData
 //   expect(negaBITmax(testBoard, -Infinity, Infinity)).toBe(score);
 // });
 
-test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
-  const testBoard = new GameBitBoard(history);
-  expect(bitSolve(testBoard)).toBe(score);
-});
+// test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
+//   const testBoard = new GameBitBoard(history);
+//   expect(bitSolve(testBoard)).toBe(score);
+// });
 
 // test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
 //   const testBoard = new PonsBitBoard(history);
@@ -43,3 +43,11 @@ test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
 //   const testBoard = new PonsBitBoard(history);
 //   expect(ponsSolve(testBoard)).toBe(score);
 // });
+
+test.each(endEasyTests)("check(%s) against (%i)", (history, score) => {
+  const testBoard = new GameBoard(history);
+
+  expect(negamax(testBoard, 30, -Infinity, Infinity)).toBe(
+    score < 0 ? -Infinity : score > 0 ? Infinity : 0
+  );
+});
