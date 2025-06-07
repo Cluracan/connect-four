@@ -1,6 +1,6 @@
 // Derived from Pascal Pons connect four blog - a few weeks to get my head round it then implemented this version
 
-import { negamax } from "./negamax";
+import type { LocationData } from "../types/gameBoard.types";
 
 const generateBottomMask = (width: number, height: number): bigint => {
   return width === 0
@@ -282,6 +282,33 @@ class GameBoard {
     console.log("\nX to play");
   }
 
+  //Return set of stone locations
+  getLocationData() {
+    let locationData = new Set<LocationData>();
+    const curPlayer = this.currentPosition
+      .toString(2)
+      .split("")
+      .reverse()
+      .join("");
+    const opponent = (this.mask ^ this.currentPosition)
+      .toString(2)
+      .split("")
+      .reverse()
+      .join("");
+
+    for (let i = 0; i < GameBoard.width; i++) {
+      for (let j = 0; j < GameBoard.height + 1; j++) {
+        let curIndex = j + i * (GameBoard.height + 1);
+        if (curPlayer[curIndex] === "1") {
+          locationData.add({ row: j, col: i, colour: "player" });
+        } else if (opponent[curIndex] === "1") {
+          locationData.add({ row: j, col: i, colour: "opponent" });
+        }
+      }
+    }
+    return locationData;
+  }
+
   //Evaluate a board
 
   //helper fn to count cells
@@ -404,9 +431,4 @@ class GameBoard {
   }
 }
 
-// const test = new GameBoard("61151145221126576476226744257647");
-// test.printPosition();
-// test.playColumn(6);
-// test.printPosition();
-// console.log(test.getEvaluation());
 export { GameBoard };

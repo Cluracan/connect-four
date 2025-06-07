@@ -12,7 +12,15 @@ const negamax = (
   beta: number
 ) => {
   const alphaOrig = alpha;
-
+  if (gameBoard.drawnGame()) {
+    return 0;
+  }
+  if (gameBoard.playerForcedWin()) {
+    return Infinity;
+  }
+  if (gameBoard.opponentForcedWin()) {
+    return -Infinity;
+  }
   let ttEntry = transpositionTable.get(gameBoard.key());
   if (ttEntry !== undefined) {
     switch (ttEntry.flag) {
@@ -29,12 +37,7 @@ const negamax = (
         }
     }
   }
-  if (
-    depth === 0 ||
-    gameBoard.playerForcedWin() ||
-    gameBoard.opponentForcedWin() ||
-    gameBoard.drawnGame()
-  ) {
+  if (depth === 0) {
     return gameBoard.getEvaluation() || 0;
   }
   let score = -Infinity;
