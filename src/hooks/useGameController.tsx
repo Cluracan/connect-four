@@ -15,7 +15,6 @@ type MakeMove = {
 const gameBoard = new GameBoard();
 const useGameController = () => {
   const [gameOver, setGameOver] = useState(false);
-  const [turn, setTurn] = useState<Player>("human");
 
   const makeMove = (col: number): MakeMove => {
     if (gameBoard.canPlay(col) && !gameOver) {
