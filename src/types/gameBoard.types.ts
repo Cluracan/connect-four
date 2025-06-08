@@ -1,7 +1,11 @@
 interface LocationData {
   row: number;
   col: number;
-  colour: "player" | "opponent";
+  colour: StoneColour;
 }
 
-export type { LocationData };
+type StoneColour = "red" | "yellow";
+
+type Player = "human" | "computer";
+
+export type { LocationData, StoneColour, Player };
