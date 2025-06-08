@@ -2,16 +2,28 @@ import { GameBoard } from "../utils/gameBoard";
 
 type ChooseColumnButtonsProps = {
   handleClick: (col: number) => void;
+  canClick: boolean;
 };
 
 let boardWidth = GameBoard.width;
-const PlayColumnButtons = ({ handleClick }: ChooseColumnButtonsProps) => {
+
+const SelectColumnButtons = ({
+  handleClick,
+  canClick,
+}: ChooseColumnButtonsProps) => {
   const buttonValues = Array.from({ length: boardWidth }, (v, i) => i);
   return (
     <>
       {buttonValues.map((buttonIndex) => {
         return (
-          <button key={buttonIndex} onClick={() => handleClick(buttonIndex)}>
+          <button
+            key={buttonIndex}
+            onClick={() => {
+              if (canClick) {
+                handleClick(buttonIndex);
+              }
+            }}
+          >
             {buttonIndex + 1}
           </button>
         );
@@ -20,4 +32,4 @@ const PlayColumnButtons = ({ handleClick }: ChooseColumnButtonsProps) => {
   );
 };
 
-export { PlayColumnButtons };
+export { SelectColumnButtons };

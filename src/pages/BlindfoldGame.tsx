@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Canvas } from "../components/Canvas";
 import type { LocationData } from "../types/gameBoard.types";
-import { PlayColumnButtons } from "../components/PlayColumnButtons";
+import { SelectColumnButtons } from "../components/SelectColumnButtons";
 import { useGameController } from "../hooks/useGameController";
 const BlindfoldGame = () => {
   const { makeMove, getLocationData, getComputerMove } = useGameController();
@@ -46,7 +46,10 @@ const BlindfoldGame = () => {
   console.log("BlindfoldRefresh");
   return (
     <>
-      <PlayColumnButtons handleClick={handleMakeMove} />
+      <SelectColumnButtons
+        handleClick={handleMakeMove}
+        canClick={!computerTurn}
+      />
 
       <Canvas locationData={locationData} />
       <button
