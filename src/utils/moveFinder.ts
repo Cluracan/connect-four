@@ -21,3 +21,5 @@ const moveFinder = (gameBoard: GameBoard, depth: number) => {
 };
 
 export { moveFinder };
+
+//TODO: create array of viable moves and choose randomly from them?  (Currently choose last one of equal scores)
