@@ -1,50 +1,11 @@
 import { use, useState } from "react";
 import "./App.css";
-import { Canvas } from "./components/Canvas";
-import { GameBoard } from "./utils/gameBoard";
-import { moveFinder } from "./utils/moveFinder";
-import type { LocationData } from "./types/gameBoard.types";
-import { PlayColumnButtons } from "./components/PlayColumnButtons";
-import { useGameController } from "./hooks/useGameController";
+
+import { BlindfoldGame } from "./pages/BlindfoldGame";
 
 function App() {
-  const { makeMove, getLocationData } = useGameController();
-  console.log(makeMove);
-  console.log("refresh");
-  const [locationData, setLocationData] = useState<Set<LocationData>>();
-  // const playMove = (col: number) => {
-  //   console.log(col);
-  //   gameBoard.playColumn(col);
-  //   let moveOptions = moveFinder(gameBoard, 4);
-  //   let moveChoice = 0;
-  //   let moveScore = -Infinity;
-  //   moveOptions.forEach((v, i) => {
-  //     // console.log(`col ${i} scores ${v}`);
-  //     if (v !== null && v >= moveScore) {
-  //       moveChoice = i;
-  //       moveScore = v;
-  //     }
-  //   });
-  //   console.log(`/n computer plays ${moveChoice}`);
-  //   gameBoard.playColumn(moveChoice);
-  //   gameBoard.printPosition();
-  //   console.log("/nplayer's turn");
-  // };
-  return (
-    <>
-      <PlayColumnButtons handleClick={makeMove} />
-
-      <Canvas locationData={locationData} />
-      <button
-        onClick={() => {
-          let locationData = getLocationData();
-          setLocationData(locationData);
-        }}
-      >
-        Show Me
-      </button>
-    </>
-  );
+  console.log("AppRefresh");
+  return <BlindfoldGame />;
 }
 
 export default App;
