@@ -1,5 +1,6 @@
 // Derived from Pascal Pons connect four blog - a few weeks to get my head round it then implemented this version
 
+import { playerColours } from "../constants";
 import type { LocationData } from "../types/gameBoard.types";
 
 const generateBottomMask = (width: number, height: number): bigint => {
@@ -295,14 +296,17 @@ class GameBoard {
       .split("")
       .reverse()
       .join("");
-
+    const curPlayerColour =
+      this.moveCount % 2 === 0 ? playerColours.human : playerColours.computer;
+    const curOpponentColour =
+      this.moveCount % 2 === 0 ? playerColours.computer : playerColours.human;
     for (let i = 0; i < GameBoard.width; i++) {
       for (let j = 0; j < GameBoard.height + 1; j++) {
         let curIndex = j + i * (GameBoard.height + 1);
         if (curPlayer[curIndex] === "1") {
-          locationData.add({ row: j, col: i, colour: "player" });
+          locationData.add({ row: j, col: i, colour: curPlayerColour });
         } else if (opponent[curIndex] === "1") {
-          locationData.add({ row: j, col: i, colour: "opponent" });
+          locationData.add({ row: j, col: i, colour: curOpponentColour });
         }
       }
     }
