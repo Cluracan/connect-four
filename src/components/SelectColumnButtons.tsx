@@ -11,7 +11,7 @@ const SelectColumnButtons = ({
   handleClick,
   canClick,
 }: ChooseColumnButtonsProps) => {
-  const buttonValues = Array.from({ length: boardWidth }, (v, i) => i);
+  const buttonValues = Array.from({ length: boardWidth }, (_, i) => i);
   return (
     <>
       {buttonValues.map((buttonIndex) => {
