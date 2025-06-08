@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
-import { Canvas } from "../components/Canvas";
 import type { LocationData } from "../types/gameBoard.types";
+import { Canvas } from "../components/Canvas";
 import { SelectColumnButtons } from "../components/SelectColumnButtons";
+import { useEffect, useState } from "react";
 import { useGameController } from "../hooks/useGameController";
+
 const BlindfoldGame = () => {
-  const { makeMove, getLocationData, getComputerMove } = useGameController();
+  const { makeMove, getLocationData, getComputerMove, resetGame } =
+    useGameController();
   const [computerTurn, setComputerTurn] = useState(false);
   const [feedbackText, setFeedbackText] = useState("Your turn");
   const [locationData, setLocationData] = useState<Set<LocationData>>();
+  const [showCanvas, setShowCanvas] = useState(false);
 
   const handleMakeMove = (col: number) => {
     let moveFeedback = makeMove(col);
@@ -32,15 +35,25 @@ const BlindfoldGame = () => {
     }
   };
 
+  const handleShowCanvas = () => {
+    setShowCanvas(true);
+    setLocationData(getLocationData());
+    console.log(locationData);
+  };
+
+  const handleReset = () => {
+    setShowCanvas(false);
+    resetGame();
+    setFeedbackText("Your turn");
+  };
+
   useEffect(() => {
     if (computerTurn) {
       setTimeout(() => {
-        console.log("computer turnb");
         let bestMove = getComputerMove(4);
         handleMakeMove(bestMove);
       }, 1500);
     }
-    console.log("go");
   }, [computerTurn]);
 
   console.log("BlindfoldRefresh");
@@ -50,16 +63,31 @@ const BlindfoldGame = () => {
         handleClick={handleMakeMove}
         canClick={!computerTurn}
       />
-
-      <Canvas locationData={locationData} />
+      {showCanvas && <Canvas locationData={locationData} />}
       <button
-        onClick={() => {
-          let locationData = getLocationData();
-          setLocationData(locationData);
+        //show/hide canvas maybe on mousedown/mouseup and touchstart/touchend though apparently click gets converted so maybe mousedown/up also do
+        // NEED TO ONLY RUN ONE OF THESE DEPENDING ON SCREEN SIZE AS mousedown fires on touchdownup if clicked
+
+        onTouchStart={() => {
+          handleShowCanvas();
+          console.log("touchstart");
+        }}
+        onTouchEnd={() => {
+          setShowCanvas(false);
+          console.log("touchend");
+        }}
+        onMouseDown={() => {
+          handleShowCanvas();
+          console.log("mousedown");
+        }}
+        onMouseUp={() => {
+          setShowCanvas(false);
+          console.log("mouseup");
         }}
       >
         Show Me
       </button>
+      <button onClick={handleReset}>Reset</button>
       <p>{feedbackText}</p>
     </>
   );
