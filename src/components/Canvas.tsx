@@ -12,6 +12,7 @@ const Canvas = ({ locationData }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
 
+  console.log("CanvasRefresh");
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
@@ -45,9 +46,9 @@ const Canvas = ({ locationData }: CanvasProps) => {
   });
 
   useEffect(() => {
-    if (context) {
-      locationData?.forEach((stone) => {
-        context.fillStyle = stone.colour === "player" ? "red" : "yellow";
+    if (context && locationData) {
+      locationData.forEach((stone) => {
+        context.fillStyle = stone.colour;
         context.beginPath();
         context.arc(
           (3 * stone.col + 1.5) * RADIUS,
@@ -57,7 +58,6 @@ const Canvas = ({ locationData }: CanvasProps) => {
           2 * Math.PI
         );
         context.fill();
-        console.log(stone);
       });
     }
   }, [locationData]);
