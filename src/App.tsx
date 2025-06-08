@@ -1,4 +1,3 @@
-import { use, useState } from "react";
 import "./App.css";
 
 import { BlindfoldGame } from "./pages/BlindfoldGame";
