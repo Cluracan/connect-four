@@ -108,6 +108,14 @@ class GameBoard {
     }
   }
 
+  resetBoard() {
+    this.mask = 0n;
+    this.currentPosition = 0n;
+    this.bottomMask = generateBottomMask(GameBoard.width, GameBoard.height);
+    this.boardMask = this.bottomMask * ((1n << BigInt(GameBoard.height)) - 1n);
+    this.moveCount = 0;
+  }
+
   possibleMoves() {
     return (this.mask + this.bottomMask) & this.boardMask;
   }

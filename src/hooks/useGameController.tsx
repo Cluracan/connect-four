@@ -64,7 +64,12 @@ const useGameController = () => {
   const getLocationData = () => {
     return gameBoard.getLocationData();
   };
-  return { makeMove, getLocationData, getComputerMove };
+
+  const resetGame = () => {
+    gameBoard.resetBoard();
+  };
+
+  return { makeMove, getLocationData, getComputerMove, resetGame };
 };
 
 export { useGameController };
