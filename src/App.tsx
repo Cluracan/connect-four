@@ -1,10 +1,11 @@
 import "./App.css";
 
 import { BlindfoldGame } from "./pages/BlindfoldGame";
+import { ClassicGame } from "./pages/ClassicGame";
 
 function App() {
   console.log("AppRefresh");
-  return <BlindfoldGame />;
+  return <ClassicGame />;
 }
 
 export default App;

@@ -20,6 +20,7 @@ class GameBoard {
   boardMask: bigint;
   currentPosition: bigint;
   moveCount: number;
+  moveHistory: number[];
   constructor(moveInput: string = "") {
     this.mask = 0n;
     this.currentPosition = 0n;
@@ -27,6 +28,8 @@ class GameBoard {
     this.boardMask = this.bottomMask * ((1n << BigInt(GameBoard.height)) - 1n);
     this.moveCount = 0;
     this.initialiseBoard(moveInput);
+    this.moveHistory = moveInput.split("").map(Number);
+    console.log(this.moveHistory);
   }
   // return a bitmask 1 on all the cells of a given column
   columnMask = (col: number) => {
@@ -67,6 +70,8 @@ class GameBoard {
     let move = (this.mask + this.columnBottomMask(col)) & this.columnMask(col);
     //extra bit carries all the way to the top of that column, like 99999 + 1 (except in base 2)
     this.playMove(move);
+    this.moveHistory.push(col);
+    console.log(this.moveHistory);
   }
 
   playMove(move: bigint) {
@@ -114,6 +119,7 @@ class GameBoard {
     this.bottomMask = generateBottomMask(GameBoard.width, GameBoard.height);
     this.boardMask = this.bottomMask * ((1n << BigInt(GameBoard.height)) - 1n);
     this.moveCount = 0;
+    this.moveHistory = [];
   }
 
   possibleMoves() {
@@ -293,31 +299,17 @@ class GameBoard {
 
   //Return set of stone locations
   getLocationData() {
-    let locationData = new Set<LocationData>();
-    const curPlayer = this.currentPosition
-      .toString(2)
-      .split("")
-      .reverse()
-      .join("");
-    const opponent = (this.mask ^ this.currentPosition)
-      .toString(2)
-      .split("")
-      .reverse()
-      .join("");
-    const curPlayerColour =
-      this.moveCount % 2 === 0 ? playerColours.human : playerColours.computer;
-    const curOpponentColour =
-      this.moveCount % 2 === 0 ? playerColours.computer : playerColours.human;
-    for (let i = 0; i < GameBoard.width; i++) {
-      for (let j = 0; j < GameBoard.height + 1; j++) {
-        let curIndex = j + i * (GameBoard.height + 1);
-        if (curPlayer[curIndex] === "1") {
-          locationData.add({ row: j, col: i, colour: curPlayerColour });
-        } else if (opponent[curIndex] === "1") {
-          locationData.add({ row: j, col: i, colour: curOpponentColour });
-        }
-      }
-    }
+    let locationData: LocationData = [];
+    let colHeight = Array.from({ length: GameBoard.width }, () => 0);
+    this.moveHistory.forEach((col, index) => {
+      locationData.push({
+        height: colHeight[col],
+        col,
+        colour: index % 2 === 0 ? playerColours.human : playerColours.computer,
+      });
+      colHeight[col]++;
+    });
+
     return locationData;
   }
 
