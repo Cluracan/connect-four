@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { LocationData } from "../types/gameBoard.types";
 interface CanvasProps {
   locationData: LocationData | undefined;
-  stoneDropData: { col: number; height: number } | null;
+
   handleClick: any;
   canClick: Boolean;
 }
@@ -57,13 +57,13 @@ const drawBoard = (context: CanvasRenderingContext2D) => {
 const dropStone = (
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
-  col: number,
-  height: number,
+
   locationData: LocationData
 ) => {
   let animationFrameID;
   const oldLocationData = locationData.slice(0, locationData.length - 1);
-  const curPlayerColour = locationData[locationData.length - 1].colour;
+  const curStone = locationData[locationData.length - 1];
+
   const stone: {
     x: number;
     y: number;
@@ -71,10 +71,10 @@ const dropStone = (
     colour: String;
     draw: () => void;
   } = {
-    x: (3 * col + 1.5) * RADIUS,
+    x: (3 * curStone.col + 1.5) * RADIUS,
     y: 1.5 * RADIUS,
     vy: 1,
-    colour: curPlayerColour,
+    colour: curStone.colour,
     draw() {
       context.beginPath();
       context.arc(this.x, this.y, RADIUS, 0, Math.PI * 2);
@@ -85,7 +85,7 @@ const dropStone = (
     },
   };
   function render() {
-    if (stone.y <= (3 * (7 - height) + 1.5) * RADIUS) {
+    if (stone.y <= (3 * (7 - curStone.height) + 1.5) * RADIUS) {
       //   console.log((3 * (6 - height) + 1.5) * RADIUS);
       //   console.log(stone.y);
       context.clearRect(0, 0, canvas.width, canvas.height);
@@ -105,7 +105,6 @@ const ClassicCanvas = ({
   locationData,
   handleClick,
   canClick,
-  stoneDropData,
 }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
@@ -139,15 +138,15 @@ const ClassicCanvas = ({
   //   }, [locationData]);
 
   useEffect(() => {
-    console.log({ stoneDropData, locationData });
+    console.log({ locationData });
     if (canvasRef.current && context) {
       const canvas = canvasRef.current;
-      if (stoneDropData && locationData) {
+      if (locationData) {
+        console.log({ locationData });
         dropStone(
           canvas,
           context,
-          stoneDropData.col,
-          stoneDropData.height,
+
           locationData
         );
       } else {
@@ -156,7 +155,7 @@ const ClassicCanvas = ({
         drawBoard(context);
       }
     }
-  }, [stoneDropData]);
+  }, [locationData]);
 
   return (
     <canvas

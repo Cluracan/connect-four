@@ -5,23 +5,15 @@ import { useEffect, useState } from "react";
 import { useGameController } from "../hooks/useGameController";
 
 const ClassicGame = () => {
-  const { makeMove, getLocationData, getComputerMove, resetGame } =
-    useGameController();
+  const { makeMove, getComputerMove, resetGame } = useGameController();
   const [computerTurn, setComputerTurn] = useState(false);
   const [feedbackText, setFeedbackText] = useState("Your turn");
   const [locationData, setLocationData] = useState<LocationData>();
-  const [stoneDropData, setStoneDropData] = useState<{
-    col: number;
-    height: number;
-  } | null>(null);
+
   const handleMakeMove = (col: number) => {
     let moveFeedback = makeMove(col);
     console.log(moveFeedback);
     if (moveFeedback.success) {
-      setStoneDropData({
-        col: moveFeedback.col,
-        height: moveFeedback.newColHeight,
-      });
       setLocationData(moveFeedback.locationData);
       console.log(locationData);
       switch (moveFeedback.result) {
@@ -44,7 +36,7 @@ const ClassicGame = () => {
 
   const handleReset = () => {
     resetGame();
-    setStoneDropData(null);
+
     setLocationData(undefined);
     setFeedbackText("Your turn");
   };
@@ -65,7 +57,6 @@ const ClassicGame = () => {
         handleClick={handleMakeMove}
         canClick={!computerTurn}
         locationData={locationData}
-        stoneDropData={stoneDropData}
       />
 
       <button onClick={handleReset}>Reset</button>
