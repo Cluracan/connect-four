@@ -1,10 +1,13 @@
-import { StoneColour } from "./types/gameBoard.types";
+const HUMAN_COLOUR = "red";
+const COMPUTER_COLOUR = "yellow";
+const MOBILE_DISC_RADIUS = 20;
+const GAMEBOARD_WIDTH = 7;
+const GAMEBOARD_HEIGHT = 6;
 
-const playerColours: { human: StoneColour; computer: StoneColour } = {
-  human: "red",
-  computer: "yellow",
+export {
+  GAMEBOARD_HEIGHT,
+  GAMEBOARD_WIDTH,
+  HUMAN_COLOUR,
+  COMPUTER_COLOUR,
+  MOBILE_DISC_RADIUS,
 };
-
-//TODO: add width, height
-
-export { playerColours };

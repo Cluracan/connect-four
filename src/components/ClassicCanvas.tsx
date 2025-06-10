@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import type { LocationData } from "../types/gameBoard.types";
+import {
+  GAMEBOARD_HEIGHT,
+  GAMEBOARD_WIDTH,
+  MOBILE_DISC_RADIUS,
+} from "../constants";
 interface CanvasProps {
   locationData: LocationData | undefined;
 
   handleClick: any;
   canClick: Boolean;
 }
-let RADIUS = 20;
+let RADIUS = MOBILE_DISC_RADIUS;
 let backgroundColour = "#242424";
-let GAMEBOARD_WIDTH = 7;
-let GAMEBOARD_HEIGHT = 7;
+let CANVAS_WIDTH = GAMEBOARD_WIDTH;
+let CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
 
 const drawStones = (
   locationData: LocationData,
@@ -32,9 +37,9 @@ const drawStones = (
 const drawBoard = (context: CanvasRenderingContext2D) => {
   context.fillStyle = "blue";
   context.beginPath();
-  for (let row = 0; row < GAMEBOARD_WIDTH; row++) {
+  for (let row = 0; row < CANVAS_HEIGHT; row++) {
     if (row === 0) continue;
-    for (let col = 0; col < GAMEBOARD_HEIGHT; col++) {
+    for (let col = 0; col < CANVAS_WIDTH; col++) {
       context.arc(
         (3 * col + 1.5) * RADIUS,
         (3 * row + 1.5) * RADIUS,
@@ -57,13 +62,13 @@ const drawBoard = (context: CanvasRenderingContext2D) => {
 const dropStone = (
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
-
-  locationData: LocationData
+  locationData: LocationData,
+  setStoneDropping: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   let animationFrameID;
   const oldLocationData = locationData.slice(0, locationData.length - 1);
   const curStone = locationData[locationData.length - 1];
-
+  setStoneDropping(true);
   const stone: {
     x: number;
     y: number;
@@ -85,9 +90,7 @@ const dropStone = (
     },
   };
   function render() {
-    if (stone.y <= (3 * (7 - curStone.height) + 1.5) * RADIUS) {
-      //   console.log((3 * (6 - height) + 1.5) * RADIUS);
-      //   console.log(stone.y);
+    if (stone.y <= (3 * (CANVAS_HEIGHT - curStone.height) + 1.5) * RADIUS) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       stone.draw();
       drawStones(oldLocationData, context);
@@ -96,6 +99,7 @@ const dropStone = (
       animationFrameID = window.requestAnimationFrame(render);
     } else {
       drawStones(locationData, context);
+      setStoneDropping(false);
     }
   }
   animationFrameID = window.requestAnimationFrame(render);
@@ -114,6 +118,7 @@ const ClassicCanvas = ({
     width: 0,
     height: 0,
   });
+  const [stoneDropping, setStoneDropping] = useState(false);
   console.log("CanvasRefresh");
   useEffect(() => {
     if (canvasRef.current) {
@@ -131,24 +136,14 @@ const ClassicCanvas = ({
     }
   }, []);
 
-  //   useEffect(() => {
-  //     if (context && locationData) {
-  //       drawStones(locationData, context);
-  //     }
-  //   }, [locationData]);
-
   useEffect(() => {
     console.log({ locationData });
+
     if (canvasRef.current && context) {
       const canvas = canvasRef.current;
       if (locationData) {
         console.log({ locationData });
-        dropStone(
-          canvas,
-          context,
-
-          locationData
-        );
+        dropStone(canvas, context, locationData, setStoneDropping);
       } else {
         context.fillStyle = backgroundColour;
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -158,21 +153,24 @@ const ClassicCanvas = ({
   }, [locationData]);
 
   return (
-    <canvas
-      onClick={(e) => {
-        if (canClick) {
-          handleClick(
-            Math.floor(
-              (7 * (e.clientX - boundingRect.left)) / boundingRect.width
-            )
-          );
-        }
-      }}
-      ref={canvasRef}
-      width={7 * 3 * RADIUS}
-      height={7 * 3 * RADIUS}
-      style={{ background: backgroundColour }}
-    />
+    <>
+      <canvas
+        onClick={(e) => {
+          if (canClick && !stoneDropping) {
+            handleClick(
+              Math.floor(
+                (CANVAS_WIDTH * (e.clientX - boundingRect.left)) /
+                  boundingRect.width
+              )
+            );
+          }
+        }}
+        ref={canvasRef}
+        width={CANVAS_WIDTH * 3 * RADIUS}
+        height={CANVAS_HEIGHT * 3 * RADIUS}
+        style={{ background: backgroundColour }}
+      />
+    </>
   );
 };
 

@@ -1,3 +1,5 @@
+import { COMPUTER_COLOUR, HUMAN_COLOUR } from "../constants";
+
 type Location = {
   height: number;
   col: number;
@@ -6,7 +8,7 @@ type Location = {
 
 type LocationData = Location[];
 
-type StoneColour = "red" | "yellow";
+type StoneColour = typeof HUMAN_COLOUR | typeof COMPUTER_COLOUR;
 
 type Player = "human" | "computer";
 

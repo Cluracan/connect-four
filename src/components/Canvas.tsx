@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import type { LocationData } from "../types/gameBoard.types";
+import {
+  GAMEBOARD_HEIGHT,
+  GAMEBOARD_WIDTH,
+  MOBILE_DISC_RADIUS,
+} from "../constants";
 interface CanvasProps {
   locationData: LocationData | undefined;
 }
-let RADIUS = 20;
-
-let GAMEBOARD_WIDTH = 7;
-let GAMEBOARD_HEIGHT = 7;
+let RADIUS = MOBILE_DISC_RADIUS;
+let CANVAS_WIDTH = GAMEBOARD_WIDTH;
+let CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
 
 const drawStones = (
   locationData: LocationData,
@@ -29,9 +33,9 @@ const drawStones = (
 const drawBoard = (context: CanvasRenderingContext2D) => {
   context.fillStyle = "blue";
   context.beginPath();
-  for (let row = 0; row < GAMEBOARD_WIDTH; row++) {
+  for (let row = 0; row < CANVAS_HEIGHT; row++) {
     if (row === 0) continue;
-    for (let col = 0; col < GAMEBOARD_HEIGHT; col++) {
+    for (let col = 0; col < CANVAS_WIDTH; col++) {
       context.arc(
         (3 * col + 1.5) * RADIUS,
         (3 * row + 1.5) * RADIUS,

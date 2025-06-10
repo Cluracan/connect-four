@@ -1,6 +1,11 @@
 // Derived from Pascal Pons connect four blog - a few weeks to get my head round it then implemented this version
 
-import { playerColours } from "../constants";
+import {
+  GAMEBOARD_HEIGHT,
+  GAMEBOARD_WIDTH,
+  HUMAN_COLOUR,
+  COMPUTER_COLOUR,
+} from "../constants";
 import type { LocationData } from "../types/gameBoard.types";
 
 const generateBottomMask = (width: number, height: number): bigint => {
@@ -11,8 +16,8 @@ const generateBottomMask = (width: number, height: number): bigint => {
 };
 
 class GameBoard {
-  static width = 7;
-  static height = 6;
+  static width = GAMEBOARD_WIDTH;
+  static height = GAMEBOARD_HEIGHT;
   static size = this.width * this.height;
 
   mask: bigint;
@@ -305,7 +310,7 @@ class GameBoard {
       locationData.push({
         height: colHeight[col],
         col,
-        colour: index % 2 === 0 ? playerColours.human : playerColours.computer,
+        colour: index % 2 === 0 ? HUMAN_COLOUR : COMPUTER_COLOUR,
       });
       colHeight[col]++;
     });
