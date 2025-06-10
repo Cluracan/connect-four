@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { LocationData } from "../types/gameBoard.types";
 interface CanvasProps {
-  locationData: Set<LocationData> | undefined;
+  locationData: LocationData | undefined;
 }
 let RADIUS = 20;
 
@@ -9,7 +9,7 @@ let GAMEBOARD_WIDTH = 7;
 let GAMEBOARD_HEIGHT = 7;
 
 const drawStones = (
-  locationData: Set<LocationData>,
+  locationData: LocationData,
   context: CanvasRenderingContext2D
 ) => {
   locationData.forEach((stone) => {
@@ -17,7 +17,7 @@ const drawStones = (
     context.beginPath();
     context.arc(
       (3 * stone.col + 1.5) * RADIUS,
-      (3 * (6 - stone.row) + 1.5) * RADIUS,
+      (3 * (6 - stone.height) + 1.5) * RADIUS,
       RADIUS,
       0,
       2 * Math.PI
@@ -68,7 +68,7 @@ const Canvas = ({ locationData }: CanvasProps) => {
         }
       }
     }
-  });
+  }, []);
 
   useEffect(() => {
     if (context && locationData) {

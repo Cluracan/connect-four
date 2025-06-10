@@ -1,8 +1,10 @@
-interface LocationData {
-  row: number;
+type Location = {
+  height: number;
   col: number;
   colour: StoneColour;
-}
+};
+
+type LocationData = Location[];
 
 type StoneColour = "red" | "yellow";
 

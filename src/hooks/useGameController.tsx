@@ -3,14 +3,18 @@ import { GameBoard } from "../utils/gameBoard";
 import { moveFinder } from "../utils/moveFinder";
 import { useState } from "react";
 type Result = "win" | "draw" | "ongoing";
-type MakeMove = {
-  success: boolean;
-  col?: number;
-  newColHeight?: number;
-  locationData?: Set<LocationData>;
-  curPlayer?: Player;
-  result?: Result;
-};
+type MakeMove =
+  | {
+      success: true;
+      col: number;
+      newColHeight: number;
+      locationData: LocationData;
+      curPlayer: Player;
+      result: Result;
+    }
+  | {
+      success: false;
+    };
 
 const gameBoard = new GameBoard();
 const useGameController = () => {
@@ -65,6 +69,7 @@ const useGameController = () => {
   };
 
   const resetGame = () => {
+    setGameOver(false);
     gameBoard.resetBoard();
   };
 

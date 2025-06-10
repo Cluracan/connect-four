@@ -9,7 +9,7 @@ const BlindfoldGame = () => {
     useGameController();
   const [computerTurn, setComputerTurn] = useState(false);
   const [feedbackText, setFeedbackText] = useState("Your turn");
-  const [locationData, setLocationData] = useState<Set<LocationData>>();
+  const [locationData, setLocationData] = useState<LocationData>();
   const [showCanvas, setShowCanvas] = useState(false);
 
   const handleMakeMove = (col: number) => {
@@ -44,6 +44,7 @@ const BlindfoldGame = () => {
   const handleReset = () => {
     setShowCanvas(false);
     resetGame();
+    console.log(resetGame);
     setFeedbackText("Your turn");
   };
 
