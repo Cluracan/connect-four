@@ -1,10 +1,12 @@
-import type { LocationData } from "../types/gameBoard.types";
-import { Canvas } from "../components/Canvas";
-import { SelectColumnButtons } from "../components/SelectColumnButtons";
 import { useEffect, useState } from "react";
+import type { LocationData } from "../types/gameBoard.types";
+import { BlindfoldCanvas } from "../components/BlindfoldCanvas";
+import { SelectColumnButtons } from "../components/SelectColumnButtons";
 import { useGameController } from "../hooks/useGameController";
-
+import { COMPUTER_DELAY } from "../constants";
+import styles from "./BlindfoldGame.module.css";
 const BlindfoldGame = () => {
+  console.log("BlindfoldRefresh");
   const { makeMove, getLocationData, getComputerMove, resetGame } =
     useGameController();
   const [computerTurn, setComputerTurn] = useState(false);
@@ -38,13 +40,12 @@ const BlindfoldGame = () => {
   const handleShowCanvas = () => {
     setShowCanvas(true);
     setLocationData(getLocationData());
-    console.log(locationData);
   };
 
   const handleReset = () => {
     setShowCanvas(false);
     resetGame();
-    console.log(resetGame);
+    setLocationData(undefined);
     setFeedbackText("Your turn");
   };
 
@@ -53,44 +54,31 @@ const BlindfoldGame = () => {
       setTimeout(() => {
         let bestMove = getComputerMove(4);
         handleMakeMove(bestMove);
-      }, 1500);
+      }, COMPUTER_DELAY);
     }
   }, [computerTurn]);
 
-  console.log("BlindfoldRefresh");
   return (
-    <>
-      <SelectColumnButtons
-        handleClick={handleMakeMove}
-        canClick={!computerTurn}
-      />
-      {showCanvas && <Canvas locationData={locationData} />}
+    <main className={styles.main}>
+      <div className={styles.canvasHolder}>
+        {showCanvas && <BlindfoldCanvas locationData={locationData} />}
+        {!showCanvas && (
+          <SelectColumnButtons
+            handleClick={handleMakeMove}
+            canClick={!computerTurn}
+          />
+        )}
+      </div>
+      <button onClick={handleReset}>Reset</button>
+      <p>{feedbackText}</p>
       <button
-        //show/hide canvas maybe on mousedown/mouseup and touchstart/touchend though apparently click gets converted so maybe mousedown/up also do
-        // NEED TO ONLY RUN ONE OF THESE DEPENDING ON SCREEN SIZE AS mousedown fires on touchdownup if clicked
-
-        onTouchStart={() => {
-          handleShowCanvas();
-          console.log("touchstart");
-        }}
-        onTouchEnd={() => {
-          setShowCanvas(false);
-          console.log("touchend");
-        }}
-        onMouseDown={() => {
-          handleShowCanvas();
-          console.log("mousedown");
-        }}
-        onMouseUp={() => {
-          setShowCanvas(false);
-          console.log("mouseup");
-        }}
+        onPointerDown={() => handleShowCanvas()}
+        onPointerLeave={() => setShowCanvas(false)}
+        onPointerUp={() => setShowCanvas(false)}
       >
         Show Me
       </button>
-      <button onClick={handleReset}>Reset</button>
-      <p>{feedbackText}</p>
-    </>
+    </main>
   );
 };
 export { BlindfoldGame };

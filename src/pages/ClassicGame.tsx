@@ -1,10 +1,12 @@
+import { useEffect, useState } from "react";
 import type { LocationData } from "../types/gameBoard.types";
 import { ClassicCanvas } from "../components/ClassicCanvas";
-
-import { useEffect, useState } from "react";
 import { useGameController } from "../hooks/useGameController";
+import { COMPUTER_DELAY } from "../constants";
+import styles from "./ClassicGame.module.css";
 
 const ClassicGame = () => {
+  console.log("ClassicRefresh");
   const { makeMove, getComputerMove, resetGame } = useGameController();
   const [computerTurn, setComputerTurn] = useState(false);
   const [feedbackText, setFeedbackText] = useState("Your turn");
@@ -12,10 +14,8 @@ const ClassicGame = () => {
 
   const handleMakeMove = (col: number) => {
     let moveFeedback = makeMove(col);
-    console.log(moveFeedback);
     if (moveFeedback.success) {
       setLocationData(moveFeedback.locationData);
-      console.log(locationData);
       switch (moveFeedback.result) {
         case "ongoing":
           setFeedbackText(
@@ -36,32 +36,31 @@ const ClassicGame = () => {
 
   const handleReset = () => {
     resetGame();
-
     setLocationData(undefined);
     setFeedbackText("Your turn");
   };
 
   useEffect(() => {
     if (computerTurn) {
+      //find and execute computer move
       setTimeout(() => {
         let bestMove = getComputerMove(4);
         handleMakeMove(bestMove);
-      }, 1500);
+      }, COMPUTER_DELAY);
     }
   }, [computerTurn]);
 
-  console.log("ClassicRefresh");
   return (
-    <>
+    <main className={styles.main}>
       <ClassicCanvas
         handleClick={handleMakeMove}
         canClick={!computerTurn}
         locationData={locationData}
       />
 
+      <p className={styles.feedback}>{feedbackText}</p>
       <button onClick={handleReset}>Reset</button>
-      <p>{feedbackText}</p>
-    </>
+    </main>
   );
 };
 export { ClassicGame };

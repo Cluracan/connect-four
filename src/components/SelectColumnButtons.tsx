@@ -1,4 +1,5 @@
 import { GameBoard } from "../utils/gameBoard";
+import styles from "./SelectColumnButtons.module.css";
 
 type ChooseColumnButtonsProps = {
   handleClick: (col: number) => void;
@@ -13,10 +14,11 @@ const SelectColumnButtons = ({
 }: ChooseColumnButtonsProps) => {
   const buttonValues = Array.from({ length: boardWidth }, (_, i) => i);
   return (
-    <>
+    <div className={styles.buttonHolder}>
       {buttonValues.map((buttonIndex) => {
         return (
           <button
+            className={styles.button}
             key={buttonIndex}
             onClick={() => {
               if (canClick) {
@@ -28,7 +30,7 @@ const SelectColumnButtons = ({
           </button>
         );
       })}
-    </>
+    </div>
   );
 };
 
