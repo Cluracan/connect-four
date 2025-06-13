@@ -94,6 +94,7 @@ const dropDisc = (
     } else {
       drawDiscs(locationData, context, radius);
       setStoneDropping(false);
+      window.cancelAnimationFrame(animationFrameID);
     }
   }
   animationFrameID = window.requestAnimationFrame(render);
