@@ -1,14 +1,10 @@
 import { expect, test } from "vitest";
 import { negamax } from "../utils/negamax";
 import { GameBoard } from "../utils/gameBoard";
-import { negaBITmax, bitSolve } from "../utils/negaBITmax";
-import { GameBitBoard } from "../utils/gameBitBoard";
-import { ponsNegamax, ponsSolve } from "../utils/ponsNegamax";
-import { PonsBitBoard } from "../utils/ponsBitBoard";
 import { readFileSync } from "fs";
 
 const endEasyData = readFileSync(
-  "./src/tests/negamax-data/Test_L2_R1",
+  "./src/tests/negamax-data/Test_L3_R1",
   "utf-8"
 );
 const endEasyTests = endEasyData

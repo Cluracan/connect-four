@@ -32,9 +32,8 @@ class GameBoard {
     this.bottomMask = generateBottomMask(GameBoard.width, GameBoard.height);
     this.boardMask = this.bottomMask * ((1n << BigInt(GameBoard.height)) - 1n);
     this.moveCount = 0;
-    this.initialiseBoard(moveInput);
     this.moveHistory = moveInput.split("").map(Number);
-    console.log(this.moveHistory);
+    this.initialiseBoard(moveInput);
   }
   // return a bitmask 1 on all the cells of a given column
   columnMask = (col: number) => {
@@ -76,7 +75,6 @@ class GameBoard {
     //extra bit carries all the way to the top of that column, like 99999 + 1 (except in base 2)
     this.playMove(move);
     this.moveHistory.push(col);
-    console.log(this.moveHistory);
   }
 
   playMove(move: bigint) {
@@ -96,6 +94,7 @@ class GameBoard {
   initialiseBoard(moveInput: string) {
     for (let i = 0; i < moveInput.length; i++) {
       let col = parseInt(moveInput[i]) - 1;
+
       if (
         col < 0 ||
         col > GameBoard.width - 1 ||
