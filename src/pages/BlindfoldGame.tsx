@@ -72,6 +72,7 @@ const BlindfoldGame = () => {
       <button onClick={handleReset}>Reset</button>
       <p>{feedbackText}</p>
       <button
+        onPointerEnter={() => handleShowCanvas()}
         onPointerDown={() => handleShowCanvas()}
         onPointerLeave={() => setShowCanvas(false)}
         onPointerUp={() => setShowCanvas(false)}
