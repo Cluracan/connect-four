@@ -58,7 +58,7 @@ const dropDisc = (
   canvasHeight: number,
   radius: number
 ) => {
-  let animationFrameID;
+  let animationFrameID: number;
   const oldLocationData = locationData.slice(0, locationData.length - 1);
   const curStone = locationData[locationData.length - 1];
   setStoneDropping(true);
