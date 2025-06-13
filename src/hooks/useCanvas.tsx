@@ -27,7 +27,7 @@ const drawBoard = (
     }
   }
 
-  context.fill();
+  context.fill("evenodd");
 };
 
 const drawDiscs = (
