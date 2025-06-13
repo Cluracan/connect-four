@@ -10,3 +10,7 @@ main {
   justify-content: center;
   min-height: 50vh;
 }
+
+.showMeButton {
+  margin-top: 1rem;
+}

@@ -16,20 +16,7 @@ const ClassicGame = () => {
     let moveFeedback = makeMove(col);
     if (moveFeedback.success) {
       setLocationData(moveFeedback.locationData);
-      switch (moveFeedback.result) {
-        case "ongoing":
-          setFeedbackText(
-            `${
-              moveFeedback.curPlayer === "human" ? "You play" : "Computer plays"
-            } column ${moveFeedback.col}`
-          );
-          break;
-        case "win":
-          setFeedbackText(`${moveFeedback.curPlayer} has WON!`);
-          break;
-        case "draw":
-          setFeedbackText(`It/'s a draw!`);
-      }
+      setFeedbackText(moveFeedback.text);
       setComputerTurn(moveFeedback.curPlayer === "human" ? true : false);
     }
   };

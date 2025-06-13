@@ -11,6 +11,7 @@ type MakeMove =
       locationData: LocationData;
       curPlayer: Player;
       result: Result;
+      text: string;
     }
   | {
       success: false;
@@ -25,13 +26,16 @@ const useGameController = () => {
       const curPlayer: Player =
         gameBoard.moveCount % 2 === 0 ? "human" : "computer";
       let result: Result = "ongoing";
+      let text: string = `${curPlayer === "human" ? "You play" : "Computer plays"} column ${col}`;
       if (gameBoard.isWinningColumn(col)) {
         setGameOver(true);
         result = "win";
+        text = `${curPlayer === "human" ? "You have " : "The Computer has "}WON!`;
       }
       gameBoard.playColumn(col);
       if (gameBoard.drawnGame()) {
         result = "draw";
+        text = `It/'s a draw!`;
       }
       const newColHeight = gameBoard.bitCount(
         gameBoard.mask & gameBoard.columnMask(col)
@@ -44,6 +48,7 @@ const useGameController = () => {
         locationData,
         curPlayer,
         result,
+        text,
       };
     } else {
       return { success: false };

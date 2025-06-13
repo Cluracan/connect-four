@@ -16,23 +16,10 @@ const BlindfoldGame = () => {
 
   const handleMakeMove = (col: number) => {
     let moveFeedback = makeMove(col);
-    console.log(moveFeedback);
+
     if (moveFeedback.success) {
       setLocationData(moveFeedback.locationData);
-      switch (moveFeedback.result) {
-        case "ongoing":
-          setFeedbackText(
-            `${
-              moveFeedback.curPlayer === "human" ? "You play" : "Computer plays"
-            } column ${moveFeedback.col}`
-          );
-          break;
-        case "win":
-          setFeedbackText(`${moveFeedback.curPlayer} has WON!`);
-          break;
-        case "draw":
-          setFeedbackText(`It/'s a draw!`);
-      }
+      setFeedbackText(moveFeedback.text);
       setComputerTurn(moveFeedback.curPlayer === "human" ? true : false);
     }
   };
@@ -69,9 +56,10 @@ const BlindfoldGame = () => {
           />
         )}
       </div>
-      <button onClick={handleReset}>Reset</button>
       <p>{feedbackText}</p>
+      <button onClick={handleReset}>Reset</button>
       <button
+        className={styles.showMeButton}
         onPointerEnter={() => handleShowCanvas()}
         onPointerDown={() => handleShowCanvas()}
         onPointerLeave={() => setShowCanvas(false)}
