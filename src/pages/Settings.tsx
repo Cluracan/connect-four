@@ -1,11 +1,10 @@
-import { useNavigate } from "@tanstack/react-router";
-import { useGameController } from "../hooks/useGameController";
 import styles from "./Settings.module.css";
+import { useGameController } from "../hooks/useGameController";
 import { useSettings } from "../store/useSettings";
+import { useNavigate } from "@tanstack/react-router";
 
 const Settings = () => {
   const navigate = useNavigate();
-
   const {
     depth,
     increaseDepth,
@@ -14,6 +13,12 @@ const Settings = () => {
     toggleZeroBasedIndex,
   } = useSettings();
   const { resetGame } = useGameController();
+
+  const handleGameClick = (target: string) => {
+    resetGame();
+    navigate({ to: target });
+  };
+
   return (
     <div className={styles.main}>
       <div className={styles.optionsHolder}>
@@ -34,20 +39,10 @@ const Settings = () => {
 
         <p>Let's Play!</p>
         <div className={styles.gameButtonHolder}>
-          <button
-            onClick={() => {
-              resetGame();
-              navigate({ to: "/classic" });
-            }}
-          >
+          <button onClick={() => handleGameClick("/classic")}>
             Classic Game
           </button>
-          <button
-            onClick={() => {
-              resetGame();
-              navigate({ to: "/blindfold" });
-            }}
-          >
+          <button onClick={() => handleGameClick("/blindfold")}>
             Blindfold Game
           </button>
         </div>

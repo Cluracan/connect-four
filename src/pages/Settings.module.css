@@ -37,6 +37,7 @@
 }
 
 .numberInput span {
+  user-select: none;
   padding: 1rem;
 }
 
