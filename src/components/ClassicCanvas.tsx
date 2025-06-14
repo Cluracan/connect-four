@@ -1,8 +1,4 @@
-import {
-  GAMEBOARD_HEIGHT,
-  GAMEBOARD_WIDTH,
-  MOBILE_DISC_RADIUS,
-} from "../constants";
+import { GAMEBOARD_HEIGHT, GAMEBOARD_WIDTH } from "../constants";
 import { useEffect, useRef, useState } from "react";
 import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas";
 
