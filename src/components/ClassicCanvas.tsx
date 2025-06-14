@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import type { LocationData } from "../types/gameBoard.types";
-import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas";
 import {
   GAMEBOARD_HEIGHT,
   GAMEBOARD_WIDTH,
   MOBILE_DISC_RADIUS,
 } from "../constants";
+import { useEffect, useRef, useState } from "react";
+import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas";
 
+import type { LocationData } from "../types/gameBoard.types";
 interface CanvasProps {
   locationData: LocationData | undefined;
   handleClick: any;
@@ -34,17 +34,14 @@ const ClassicCanvas = ({
   const [stoneDropping, setStoneDropping] = useState(false);
 
   useEffect(() => {
-    console.log("1st UseEffect");
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       let { top, left, width, height } = canvas.getBoundingClientRect();
       setBoundingRect({ top, left, width, height });
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        console.log("1st UseEffect has canvas and ctx");
         setContext(ctx);
         drawBoard(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, RADIUS);
-        console.log(locationData);
         if (locationData) {
           drawDiscs(locationData, ctx, RADIUS);
         }
@@ -53,12 +50,9 @@ const ClassicCanvas = ({
   }, []);
 
   useEffect(() => {
-    console.log("2nd useEffect");
     if (canvasRef.current && context) {
-      console.log("2nd useEffect has canvas and context");
       const canvas = canvasRef.current;
       if (locationData) {
-        console.log("2nd useEffect also has location data");
         //new disc has been played
         dropDisc(
           canvas,
@@ -70,7 +64,6 @@ const ClassicCanvas = ({
           RADIUS
         );
       } else {
-        console.log("2nd useEffect also has NO location data");
         //reset => no location data
         context.clearRect(0, 0, canvas.width, canvas.height);
         drawBoard(context, CANVAS_WIDTH, CANVAS_HEIGHT, RADIUS);

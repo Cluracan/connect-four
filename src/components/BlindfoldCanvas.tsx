@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import type { LocationData } from "../types/gameBoard.types";
-import { drawBoard, drawDiscs } from "../hooks/useCanvas";
 import {
   GAMEBOARD_HEIGHT,
   GAMEBOARD_WIDTH,
   MOBILE_DISC_RADIUS,
 } from "../constants";
+import { useEffect, useRef, useState } from "react";
+import { drawBoard, drawDiscs } from "../hooks/useCanvas";
 
+import type { LocationData } from "../types/gameBoard.types";
 interface CanvasProps {
   locationData: LocationData | undefined;
 }
@@ -16,7 +16,6 @@ const CANVAS_WIDTH = GAMEBOARD_WIDTH;
 const CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
 
 const BlindfoldCanvas = ({ locationData }: CanvasProps) => {
-  console.log("CanvasRefresh");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
 

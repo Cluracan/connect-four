@@ -1,7 +1,9 @@
-import { LocationData, Player } from "../types/gameBoard.types";
 import { GameBoard } from "../utils/gameBoard";
 import { moveFinder } from "../utils/moveFinder";
+import { useSettings } from "../store/useSettings";
 import { useState } from "react";
+
+import { LocationData, Player } from "../types/gameBoard.types";
 type Result = "win" | "draw" | "ongoing";
 type MakeMove =
   | {
@@ -20,23 +22,28 @@ type MakeMove =
 const gameBoard = new GameBoard();
 const useGameController = () => {
   const [gameOver, setGameOver] = useState(false);
+  const { depth, zeroBasedIndex } = useSettings();
 
   const makeMove = (col: number): MakeMove => {
     if (gameBoard.canPlay(col) && !gameOver) {
       const curPlayer: Player =
         gameBoard.moveCount % 2 === 0 ? "human" : "computer";
+      //assume ongoing game
       let result: Result = "ongoing";
-      let text: string = `${curPlayer === "human" ? "You play" : "Computer plays"} column ${col}`;
+      let text: string = `${curPlayer === "human" ? "You play" : "Computer plays"} column ${zeroBasedIndex ? col : col + 1}`;
+      //win check
       if (gameBoard.isWinningColumn(col)) {
         setGameOver(true);
         result = "win";
         text = `${curPlayer === "human" ? "You have " : "The Computer has "}WON!`;
       }
       gameBoard.playColumn(col);
+      //draw check
       if (gameBoard.drawnGame()) {
         result = "draw";
         text = `It/'s a draw!`;
       }
+
       const newColHeight = gameBoard.bitCount(
         gameBoard.mask & gameBoard.columnMask(col)
       );
@@ -55,7 +62,7 @@ const useGameController = () => {
     }
   };
 
-  const getComputerMove = (depth: number) => {
+  const getComputerMove = () => {
     const moveOptions = moveFinder(gameBoard, depth);
     let bestMove = 0;
     let bestScore = -Infinity;
@@ -65,7 +72,6 @@ const useGameController = () => {
         bestScore = curScore;
       }
     });
-    console.log(`computer chooses ${bestMove} scoring ${bestScore}`);
     return bestMove;
   };
 

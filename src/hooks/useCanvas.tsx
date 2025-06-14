@@ -26,7 +26,7 @@ const drawBoard = (
       );
     }
   }
-
+  //android seems to accept both, but ios only renders holes with evenodd
   context.fill("evenodd");
 };
 
