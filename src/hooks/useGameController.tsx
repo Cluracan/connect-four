@@ -2,8 +2,8 @@ import { GameBoard } from "../utils/gameBoard";
 import { moveFinder } from "../utils/moveFinder";
 import { useSettings } from "../store/useSettings";
 import { useState } from "react";
-
 import { LocationData, Player } from "../types/gameBoard.types";
+
 type Result = "win" | "draw" | "ongoing";
 type MakeMove =
   | {

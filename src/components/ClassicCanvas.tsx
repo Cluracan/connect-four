@@ -7,13 +7,13 @@ import { useEffect, useRef, useState } from "react";
 import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas";
 
 import type { LocationData } from "../types/gameBoard.types";
+import { useWindowDimensions } from "../hooks/useWindowDimensions";
 interface CanvasProps {
   locationData: LocationData | undefined;
   handleClick: any;
   canClick: Boolean;
 }
 
-const RADIUS = MOBILE_DISC_RADIUS;
 const CANVAS_WIDTH = GAMEBOARD_WIDTH;
 const CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
 
@@ -32,7 +32,8 @@ const ClassicCanvas = ({
     height: 0,
   });
   const [stoneDropping, setStoneDropping] = useState(false);
-
+  const { radius } = useWindowDimensions();
+  const RADIUS = radius;
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;

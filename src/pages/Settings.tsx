@@ -2,7 +2,7 @@ import styles from "./Settings.module.css";
 import { useGameController } from "../hooks/useGameController";
 import { useSettings } from "../store/useSettings";
 import { useNavigate } from "@tanstack/react-router";
-
+import { useWindowDimensions } from "../hooks/useWindowDimensions";
 const Settings = () => {
   const navigate = useNavigate();
   const {
@@ -13,7 +13,7 @@ const Settings = () => {
     toggleZeroBasedIndex,
   } = useSettings();
   const { resetGame } = useGameController();
-
+  const { width } = useWindowDimensions();
   const handleGameClick = (target: string) => {
     resetGame();
     navigate({ to: target });
@@ -36,7 +36,7 @@ const Settings = () => {
           </button>
         </div>
         <p>Columns will be labelled {zeroBasedIndex ? "0 to 6" : "1 to 7"}</p>
-
+        <p>{width}</p>
         <p>Let's Play!</p>
         <div className={styles.gameButtonHolder}>
           <button onClick={() => handleGameClick("/classic")}>
