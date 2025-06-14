@@ -1,9 +1,9 @@
+import styles from "./ClassicGame.module.css";
 import { useEffect, useState } from "react";
-import type { LocationData } from "../types/gameBoard.types";
 import { ClassicCanvas } from "../components/ClassicCanvas";
 import { useGameController } from "../hooks/useGameController";
 import { COMPUTER_DELAY } from "../constants";
-import styles from "./ClassicGame.module.css";
+import type { LocationData } from "../types/gameBoard.types";
 
 const ClassicGame = () => {
   console.log("ClassicRefresh");
@@ -29,9 +29,8 @@ const ClassicGame = () => {
 
   useEffect(() => {
     if (computerTurn) {
-      //find and execute computer move
       setTimeout(() => {
-        let bestMove = getComputerMove(4);
+        let bestMove = getComputerMove();
         handleMakeMove(bestMove);
       }, COMPUTER_DELAY);
     }

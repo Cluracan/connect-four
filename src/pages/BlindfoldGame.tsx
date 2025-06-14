@@ -1,10 +1,11 @@
+import styles from "./BlindfoldGame.module.css";
 import { useEffect, useState } from "react";
-import type { LocationData } from "../types/gameBoard.types";
 import { BlindfoldCanvas } from "../components/BlindfoldCanvas";
 import { SelectColumnButtons } from "../components/SelectColumnButtons";
 import { useGameController } from "../hooks/useGameController";
 import { COMPUTER_DELAY } from "../constants";
-import styles from "./BlindfoldGame.module.css";
+import type { LocationData } from "../types/gameBoard.types";
+
 const BlindfoldGame = () => {
   console.log("BlindfoldRefresh");
   const { makeMove, getLocationData, getComputerMove, resetGame } =
@@ -16,7 +17,6 @@ const BlindfoldGame = () => {
 
   const handleMakeMove = (col: number) => {
     let moveFeedback = makeMove(col);
-
     if (moveFeedback.success) {
       setLocationData(moveFeedback.locationData);
       setFeedbackText(moveFeedback.text);
@@ -39,7 +39,7 @@ const BlindfoldGame = () => {
   useEffect(() => {
     if (computerTurn) {
       setTimeout(() => {
-        let bestMove = getComputerMove(4);
+        let bestMove = getComputerMove();
         handleMakeMove(bestMove);
       }, COMPUTER_DELAY);
     }
@@ -60,7 +60,6 @@ const BlindfoldGame = () => {
       <button onClick={handleReset}>Reset</button>
       <button
         className={styles.showMeButton}
-        onPointerEnter={() => handleShowCanvas()}
         onPointerDown={() => handleShowCanvas()}
         onPointerLeave={() => setShowCanvas(false)}
         onPointerUp={() => setShowCanvas(false)}

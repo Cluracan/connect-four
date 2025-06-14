@@ -1,18 +1,19 @@
-import { GameBoard } from "../utils/gameBoard";
 import styles from "./SelectColumnButtons.module.css";
+import { useSettings } from "../store/useSettings";
+import { GAMEBOARD_WIDTH } from "../constants";
 
 type ChooseColumnButtonsProps = {
   handleClick: (col: number) => void;
   canClick: boolean;
 };
 
-let boardWidth = GameBoard.width;
-
 const SelectColumnButtons = ({
   handleClick,
   canClick,
 }: ChooseColumnButtonsProps) => {
-  const buttonValues = Array.from({ length: boardWidth }, (_, i) => i);
+  const { zeroBasedIndex } = useSettings();
+  const buttonValues = Array.from({ length: GAMEBOARD_WIDTH }, (_, i) => i);
+
   return (
     <div className={styles.buttonHolder}>
       {buttonValues.map((buttonIndex) => {
@@ -26,7 +27,7 @@ const SelectColumnButtons = ({
               }
             }}
           >
-            {buttonIndex + 1}
+            {zeroBasedIndex ? buttonIndex : buttonIndex + 1}
           </button>
         );
       })}
