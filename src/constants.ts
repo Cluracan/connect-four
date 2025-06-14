@@ -1,7 +1,7 @@
 const GAMEBOARD_WIDTH = 7;
 const GAMEBOARD_HEIGHT = 6;
 const MIN_DEPTH = 1;
-const MAX_DEPTH = 5;
+const MAX_DEPTH = 7;
 
 const HUMAN_COLOUR = "red";
 const COMPUTER_COLOUR = "yellow";
