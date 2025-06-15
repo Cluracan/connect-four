@@ -23,6 +23,7 @@ const ClassicGame = () => {
 
   const handleReset = () => {
     resetGame();
+    setComputerTurn(false);
     setLocationData(undefined);
     setFeedbackText("Your turn");
   };
