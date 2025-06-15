@@ -358,7 +358,7 @@ class GameBoard {
     }
     //otherwise calculate a score
     return (
-      this.evaluatePosition(this.currentPosition) -
+      2 * this.evaluatePosition(this.currentPosition) -
       this.evaluatePosition(this.mask ^ this.currentPosition)
     );
   }
@@ -435,7 +435,7 @@ class GameBoard {
     );
     // console.log({ threeCount });
 
-    return threeCount ** 2 + twoCount;
+    return 2 * threeCount + twoCount;
   }
 }
 
