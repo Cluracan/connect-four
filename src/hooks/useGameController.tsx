@@ -64,6 +64,7 @@ const useGameController = () => {
 
   const getComputerMove = () => {
     const moveOptions = moveFinder(gameBoard, depth);
+    console.log(moveOptions);
     let bestMove = 0;
     let bestScore = -Infinity;
     moveOptions.forEach((curScore, curIndex) => {
