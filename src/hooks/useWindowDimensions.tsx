@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { MOBILE_DISC_RADIUS, GAMEBOARD_WIDTH } from "../constants";
+import { MAX_DISC_RADIUS, GAMEBOARD_WIDTH } from "../constants";
 type Dimensions = {
   width: number;
   height: number;
@@ -12,7 +12,7 @@ const useWindowDimensions = () => {
     width: window.innerWidth,
     height: window.innerHeight,
     radius: Math.min(
-      MOBILE_DISC_RADIUS,
+      MAX_DISC_RADIUS,
       Math.floor(window.innerWidth / (3 * GAMEBOARD_WIDTH))
     ),
   });
@@ -27,7 +27,7 @@ const useWindowDimensions = () => {
         width: window.innerWidth,
         height: window.innerHeight,
         radius: Math.min(
-          MOBILE_DISC_RADIUS,
+          MAX_DISC_RADIUS,
           Math.floor(window.innerWidth / (3 * GAMEBOARD_WIDTH))
         ),
       });

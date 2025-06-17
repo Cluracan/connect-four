@@ -5,7 +5,7 @@ const MAX_DEPTH = 7;
 
 const HUMAN_COLOUR = "red";
 const COMPUTER_COLOUR = "yellow";
-const MOBILE_DISC_RADIUS = 20;
+const MAX_DISC_RADIUS = 20;
 const COMPUTER_DELAY = 1500;
 
 export {
@@ -15,6 +15,6 @@ export {
   MAX_DEPTH,
   HUMAN_COLOUR,
   COMPUTER_COLOUR,
-  MOBILE_DISC_RADIUS,
+  MAX_DISC_RADIUS,
   COMPUTER_DELAY,
 };
