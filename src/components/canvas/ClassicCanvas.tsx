@@ -29,8 +29,8 @@ export const ClassicCanvas = ({
     height: 0,
   });
   const [stoneDropping, setStoneDropping] = useState(false);
-
   const { radius: RADIUS } = useWindowDimensions();
+
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;

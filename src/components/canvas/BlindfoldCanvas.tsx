@@ -1,24 +1,20 @@
-import {
-  GAMEBOARD_HEIGHT,
-  GAMEBOARD_WIDTH,
-  MOBILE_DISC_RADIUS,
-} from "../../constants.ts";
+import { GAMEBOARD_HEIGHT, GAMEBOARD_WIDTH } from "../../constants.ts";
 import { useEffect, useRef, useState } from "react";
 import { drawBoard, drawDiscs } from "./utils.ts";
-
+import { useWindowDimensions } from "../../hooks/useWindowDimensions.tsx";
 import type { LocationData } from "../../types.ts";
+
+const CANVAS_WIDTH = GAMEBOARD_WIDTH;
+const CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
+
 interface CanvasProps {
   locationData: LocationData | undefined;
 }
 
-const RADIUS = MOBILE_DISC_RADIUS;
-const CANVAS_WIDTH = GAMEBOARD_WIDTH;
-const CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
-
 const BlindfoldCanvas = ({ locationData }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
-
+  const { radius: RADIUS } = useWindowDimensions();
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
