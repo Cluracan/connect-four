@@ -4,49 +4,52 @@ import { BlindfoldCanvas } from "../components/BlindfoldCanvas";
 import { SelectColumnButtons } from "../components/SelectColumnButtons";
 import { useGameController } from "../hooks/useGameController";
 import { COMPUTER_DELAY } from "../constants";
-import type { LocationData } from "../types/gameBoard.types";
 
 const BlindfoldGame = () => {
   console.log("BlindfoldRefresh");
-  const { makeMove, getLocationData, getComputerMove, resetGame } =
-    useGameController();
-  const [computerTurn, setComputerTurn] = useState(false);
-  const [feedbackText, setFeedbackText] = useState("Your turn");
-  const [locationData, setLocationData] = useState<LocationData>();
+
+  const {
+    makeMove,
+    locationData,
+    feedbackText,
+    getComputerMove,
+    resetGame,
+    computerTurn,
+  } = useGameController();
+
   const [showCanvas, setShowCanvas] = useState(false);
 
   const handleMakeMove = (col: number) => {
-    let moveFeedback = makeMove(col);
-    if (moveFeedback.success) {
-      setLocationData(moveFeedback.locationData);
-      setFeedbackText(moveFeedback.text);
-      setComputerTurn(moveFeedback.curPlayer === "human" ? true : false);
-    }
+    makeMove(col);
   };
 
   const handleShowCanvas = () => {
     setShowCanvas(true);
-    setLocationData(getLocationData());
   };
 
   const handleReset = () => {
     setShowCanvas(false);
     resetGame();
-    setLocationData(undefined);
-    setFeedbackText("Your turn");
   };
 
   useEffect(() => {
     if (computerTurn) {
-      setTimeout(() => {
-        let bestMove = getComputerMove();
-        handleMakeMove(bestMove);
-      }, COMPUTER_DELAY);
+      const start = performance.now();
+      let bestMove = getComputerMove();
+      const end = performance.now();
+      const took = end - start;
+      setTimeout(
+        () => {
+          handleMakeMove(bestMove);
+        },
+        took > COMPUTER_DELAY ? 0 : COMPUTER_DELAY - took
+      );
     }
   }, [computerTurn]);
 
   return (
     <main className={styles.main}>
+      {/* {gameOver && <p> GAME OVER!</p>} */}
       <div className={styles.canvasHolder}>
         {showCanvas && <BlindfoldCanvas locationData={locationData} />}
         {!showCanvas && (

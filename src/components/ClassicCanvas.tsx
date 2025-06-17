@@ -1,19 +1,20 @@
 import { GAMEBOARD_HEIGHT, GAMEBOARD_WIDTH } from "../constants";
 import { useEffect, useRef, useState } from "react";
-import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas";
+import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas"; // >:( not a hook
 
-import type { LocationData } from "../types/gameBoard.types";
+import { LocationData } from "../types.ts";
 import { useWindowDimensions } from "../hooks/useWindowDimensions";
+
 interface CanvasProps {
   locationData: LocationData | undefined;
-  handleClick: any;
+  handleClick: (col: number) => void;
   canClick: Boolean;
 }
 
 const CANVAS_WIDTH = GAMEBOARD_WIDTH;
 const CANVAS_HEIGHT = GAMEBOARD_HEIGHT + 1;
 
-const ClassicCanvas = ({
+export const ClassicCanvas = ({
   locationData,
   handleClick,
   canClick,
@@ -28,8 +29,8 @@ const ClassicCanvas = ({
     height: 0,
   });
   const [stoneDropping, setStoneDropping] = useState(false);
-  const { radius } = useWindowDimensions();
-  const RADIUS = radius;
+
+  const { radius: RADIUS } = useWindowDimensions();
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
@@ -68,18 +69,17 @@ const ClassicCanvas = ({
     }
   }, [locationData]);
 
-  function calculateColumn(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
-    return Math.floor(
-      (CANVAS_WIDTH * (e.clientX - boundingRect.left)) / boundingRect.width
-    );
-  }
-
   return (
     <>
       <canvas
         onClick={(e) => {
           if (canClick && !stoneDropping) {
-            handleClick(calculateColumn(e));
+            handleClick(
+              Math.floor(
+                (CANVAS_WIDTH * (e.clientX - boundingRect.left)) /
+                  boundingRect.width
+              )
+            );
           }
         }}
         ref={canvasRef}
@@ -89,5 +89,3 @@ const ClassicCanvas = ({
     </>
   );
 };
-
-export { ClassicCanvas };

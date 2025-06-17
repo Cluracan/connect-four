@@ -6,7 +6,7 @@ import {
   HUMAN_COLOUR,
   COMPUTER_COLOUR,
 } from "../constants";
-import type { LocationData } from "../types/gameBoard.types";
+import type { LocationData } from "../types.ts";
 
 const generateBottomMask = (width: number, height: number): bigint => {
   return width === 0
@@ -14,6 +14,7 @@ const generateBottomMask = (width: number, height: number): bigint => {
     : generateBottomMask(width - 1, height) |
         (1n << BigInt((width - 1) * (height + 1)));
 };
+// THIS IS YOUR HOOK
 
 class GameBoard {
   static width = GAMEBOARD_WIDTH;

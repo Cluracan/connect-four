@@ -6,7 +6,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { drawBoard, drawDiscs } from "../hooks/useCanvas";
 
-import type { LocationData } from "../types/gameBoard.types";
+import type { LocationData } from "../types.ts";
 interface CanvasProps {
   locationData: LocationData | undefined;
 }
