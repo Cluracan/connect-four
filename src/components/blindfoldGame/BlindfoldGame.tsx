@@ -37,12 +37,12 @@ const BlindfoldGame = () => {
       const start = performance.now();
       let bestMove = getComputerMove();
       const end = performance.now();
-      const took = end - start;
+      const elapsed = end - start;
       setTimeout(
         () => {
           handleMakeMove(bestMove);
         },
-        took > COMPUTER_DELAY ? 0 : COMPUTER_DELAY - took
+        elapsed > COMPUTER_DELAY ? 0 : COMPUTER_DELAY - elapsed
       );
     }
   }, [computerTurn]);

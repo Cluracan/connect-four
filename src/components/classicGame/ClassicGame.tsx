@@ -25,10 +25,16 @@ const ClassicGame = () => {
 
   useEffect(() => {
     if (computerTurn) {
-      setTimeout(() => {
-        let bestMove = getComputerMove();
-        handleMakeMove(bestMove);
-      }, COMPUTER_DELAY);
+      const start = performance.now();
+      let bestMove = getComputerMove();
+      const end = performance.now();
+      const elapsed = end - start;
+      setTimeout(
+        () => {
+          handleMakeMove(bestMove);
+        },
+        elapsed > COMPUTER_DELAY ? 0 : COMPUTER_DELAY - elapsed
+      );
     }
   }, [computerTurn]);
 
