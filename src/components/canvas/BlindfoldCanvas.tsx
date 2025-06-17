@@ -2,11 +2,11 @@ import {
   GAMEBOARD_HEIGHT,
   GAMEBOARD_WIDTH,
   MOBILE_DISC_RADIUS,
-} from "../constants";
+} from "../../constants.ts";
 import { useEffect, useRef, useState } from "react";
-import { drawBoard, drawDiscs } from "../hooks/useCanvas";
+import { drawBoard, drawDiscs } from "../../hooks/useCanvas.tsx";
 
-import type { LocationData } from "../types.ts";
+import type { LocationData } from "../../types.ts";
 interface CanvasProps {
   locationData: LocationData | undefined;
 }

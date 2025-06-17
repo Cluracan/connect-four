@@ -1,8 +1,8 @@
 import styles from "./ClassicGame.module.css";
 import { useEffect } from "react";
-import { ClassicCanvas } from "../components/ClassicCanvas";
-import { useGameController } from "../hooks/useGameController";
-import { COMPUTER_DELAY } from "../constants";
+import { ClassicCanvas } from "../canvas/ClassicCanvas";
+import { useGameController } from "../../hooks/useGameController";
+import { COMPUTER_DELAY } from "../../constants";
 
 const ClassicGame = () => {
   console.log("ClassicRefresh");

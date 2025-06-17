@@ -1,4 +1,4 @@
-import { Settings } from "../pages/Settings";
+import { Settings } from "../components/settings/Settings";
 
 const Index = () => {
   return <Settings />;

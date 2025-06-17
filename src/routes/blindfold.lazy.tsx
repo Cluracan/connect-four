@@ -1,4 +1,4 @@
-import { BlindfoldGame } from "../pages/BlindfoldGame";
+import { BlindfoldGame } from "../components/blindfoldGame/BlindfoldGame";
 
 export const Route = createLazyFileRoute({
   component: RouteComponent,

@@ -1,6 +1,6 @@
 import styles from "./SelectColumnButtons.module.css";
-import { useSettings } from "../store/useSettings";
-import { GAMEBOARD_WIDTH } from "../constants";
+import { useSettings } from "../../store/useSettings";
+import { GAMEBOARD_WIDTH } from "../../constants";
 
 type ChooseColumnButtonsProps = {
   handleClick: (col: number) => void;

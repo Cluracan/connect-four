@@ -1,8 +1,8 @@
 import styles from "./Settings.module.css";
-import { useGameController } from "../hooks/useGameController";
-import { useSettings } from "../store/useSettings";
+import { useGameController } from "../../hooks/useGameController";
+import { useSettings } from "../../store/useSettings";
 import { useNavigate } from "@tanstack/react-router";
-import { useWindowDimensions } from "../hooks/useWindowDimensions";
+import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 const Settings = () => {
   const navigate = useNavigate();
   const {

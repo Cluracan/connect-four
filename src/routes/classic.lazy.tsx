@@ -1,4 +1,4 @@
-import { ClassicGame } from "../pages/ClassicGame";
+import { ClassicGame } from "../components/classicGame/ClassicGame";
 
 export const Route = createLazyFileRoute({
   component: RouteComponent,

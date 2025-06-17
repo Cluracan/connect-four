@@ -1,9 +1,9 @@
 import styles from "./BlindfoldGame.module.css";
 import { useEffect, useState } from "react";
-import { BlindfoldCanvas } from "../components/BlindfoldCanvas";
-import { SelectColumnButtons } from "../components/SelectColumnButtons";
-import { useGameController } from "../hooks/useGameController";
-import { COMPUTER_DELAY } from "../constants";
+import { BlindfoldCanvas } from "../canvas/BlindfoldCanvas";
+import { SelectColumnButtons } from "../selectColumnButtons/SelectColumnButtons";
+import { useGameController } from "../../hooks/useGameController";
+import { COMPUTER_DELAY } from "../../constants";
 
 const BlindfoldGame = () => {
   console.log("BlindfoldRefresh");

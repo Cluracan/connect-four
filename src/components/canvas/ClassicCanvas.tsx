@@ -1,9 +1,9 @@
-import { GAMEBOARD_HEIGHT, GAMEBOARD_WIDTH } from "../constants";
+import { GAMEBOARD_HEIGHT, GAMEBOARD_WIDTH } from "../../constants.ts";
 import { useEffect, useRef, useState } from "react";
-import { drawBoard, drawDiscs, dropDisc } from "../hooks/useCanvas"; // >:( not a hook
+import { drawBoard, drawDiscs, dropDisc } from "../../hooks/useCanvas.tsx"; // >:( not a hook
 
-import { LocationData } from "../types.ts";
-import { useWindowDimensions } from "../hooks/useWindowDimensions";
+import { LocationData } from "../../types.ts";
+import { useWindowDimensions } from "../../hooks/useWindowDimensions.tsx";
 
 interface CanvasProps {
   locationData: LocationData | undefined;
