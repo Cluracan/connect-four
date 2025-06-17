@@ -4,7 +4,7 @@ import {
   MOBILE_DISC_RADIUS,
 } from "../../constants.ts";
 import { useEffect, useRef, useState } from "react";
-import { drawBoard, drawDiscs } from "../../hooks/useCanvas.tsx";
+import { drawBoard, drawDiscs } from "./utils.ts";
 
 import type { LocationData } from "../../types.ts";
 interface CanvasProps {

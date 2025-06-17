@@ -1,6 +1,6 @@
 import { GAMEBOARD_HEIGHT, GAMEBOARD_WIDTH } from "../../constants.ts";
 import { useEffect, useRef, useState } from "react";
-import { drawBoard, drawDiscs, dropDisc } from "../../hooks/useCanvas.tsx"; // >:( not a hook
+import { drawBoard, drawDiscs, dropDisc } from "./utils.ts";
 
 import { LocationData } from "../../types.ts";
 import { useWindowDimensions } from "../../hooks/useWindowDimensions.tsx";
