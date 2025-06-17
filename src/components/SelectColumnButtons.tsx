@@ -12,11 +12,10 @@ const SelectColumnButtons = ({
   canClick,
 }: ChooseColumnButtonsProps) => {
   const { zeroBasedIndex } = useSettings();
-  const buttonValues = Array.from({ length: GAMEBOARD_WIDTH }, (_, i) => i);
 
   return (
     <div className={styles.buttonHolder}>
-      {buttonValues.map((buttonIndex) => {
+      {Array.from({ length: GAMEBOARD_WIDTH }).map((_, buttonIndex) => {
         return (
           <button
             className={styles.button}
