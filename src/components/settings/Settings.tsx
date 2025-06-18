@@ -1,12 +1,4 @@
-import styles from "./Settings.module.css";
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  Slider,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Paper, Slider, Typography } from "@mui/material";
 import { useGameController } from "../../hooks/useGameController";
 import { useSettings } from "../../store/useSettings";
 import { useNavigate } from "@tanstack/react-router";

@@ -4,7 +4,7 @@ import { useSettings } from "../store/useSettings";
 import { useState } from "react";
 import { LocationData, Player } from "../types.ts";
 
-type Result = "win" | "draw" | "ongoing";
+// type Result = "win" | "draw" | "ongoing";
 
 const gameBoard = new GameBoard();
 const useGameController = () => {
@@ -13,7 +13,7 @@ const useGameController = () => {
   const [locationData, setLocationData] = useState<LocationData>(null);
   const [feedbackText, setFeedbackText] = useState("Your turn");
   const [computerTurn, setComputerTurn] = useState(false);
-  const [result, setResult] = useState<Result>("ongoing");
+  // const [result, setResult] = useState<Result>("ongoing");
 
   const makeMove = (col: number) => {
     if (gameBoard.canPlay(col) && !gameOver) {
@@ -23,7 +23,7 @@ const useGameController = () => {
       //win check
       if (gameBoard.isWinningColumn(col)) {
         setGameOver(true);
-        setResult("win");
+        // setResult("win");
         setFeedbackText(
           `${curPlayer === "human" ? "You have " : "The Computer has "}WON!`
         );
@@ -33,11 +33,11 @@ const useGameController = () => {
         gameBoard.playColumn(col);
         //draw check
         if (gameBoard.drawnGame()) {
-          setResult("draw");
+          // setResult("draw");
           setFeedbackText("It/'s a draw!");
           setGameOver(true);
         } else {
-          setResult("ongoing");
+          // setResult("ongoing");
           setFeedbackText(
             `${curPlayer === "human" ? "You play" : "Computer plays"} column ${zeroBasedIndex ? col : col + 1}`
           );
