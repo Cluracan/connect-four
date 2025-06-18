@@ -41,7 +41,7 @@ const Settings = () => {
       </Typography>
 
       <Slider
-        sx={{ m: 4 }}
+        sx={{ m: 4, maxWidth: 200 }}
         aria-label="Difficulty"
         defaultValue={depth}
         getAriaValueText={(value) => `${value}`}
@@ -62,10 +62,10 @@ const Settings = () => {
         variant="outlined"
         onClick={() => toggleZeroBasedIndex()}
       >
-        {`${zeroBasedIndex ? "I'm a programmer" : "I'm a normal person"}`}
+        {`${zeroBasedIndex ? "I'm a coder" : "I'm  normal"}`}
       </Button>
       <Typography variant="body2">
-        Columns will be labelled {zeroBasedIndex ? "0 to 6" : "1 to 7"}
+        (Columns labelled {zeroBasedIndex ? "0 to 6" : "1 to 7"})
       </Typography>
 
       <Typography variant="h5" sx={{ my: 3 }}>

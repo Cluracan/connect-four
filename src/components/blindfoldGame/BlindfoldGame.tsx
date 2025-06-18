@@ -1,9 +1,9 @@
-import styles from "./BlindfoldGame.module.css";
 import { useEffect, useState } from "react";
 import { BlindfoldCanvas } from "../canvas/BlindfoldCanvas";
 import { SelectColumnButtons } from "../selectColumnButtons/SelectColumnButtons";
 import { useGameController } from "../../hooks/useGameController";
 import { COMPUTER_DELAY } from "../../constants";
+import { Button, Box, Typography } from "@mui/material";
 
 const BlindfoldGame = () => {
   console.log("BlindfoldRefresh");
@@ -48,9 +48,18 @@ const BlindfoldGame = () => {
   }, [computerTurn]);
 
   return (
-    <main className={styles.main}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       {/* {gameOver && <p> GAME OVER!</p>} */}
-      <div className={styles.canvasHolder}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          minHeight: "50vh",
+        }}
+      >
         {showCanvas && <BlindfoldCanvas locationData={locationData} />}
         {!showCanvas && (
           <SelectColumnButtons
@@ -58,18 +67,17 @@ const BlindfoldGame = () => {
             canClick={!computerTurn}
           />
         )}
-      </div>
-      <p>{feedbackText}</p>
-      <button onClick={handleReset}>Reset</button>
-      <button
-        className={styles.showMeButton}
+      </Box>
+      <Typography variant="body1">{feedbackText}</Typography>
+      <Button onClick={handleReset}>Reset</Button>
+      <Button
         onPointerDown={() => handleShowCanvas()}
         onPointerLeave={() => setShowCanvas(false)}
         onPointerUp={() => setShowCanvas(false)}
       >
         Show Me
-      </button>
-    </main>
+      </Button>
+    </Box>
   );
 };
 export { BlindfoldGame };

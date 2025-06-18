@@ -74,6 +74,7 @@ const useGameController = () => {
     locationData,
     feedbackText,
     computerTurn,
+    gameOver,
     makeMove,
     getComputerMove,
     resetGame,

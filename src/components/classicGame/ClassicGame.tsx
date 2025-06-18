@@ -1,18 +1,19 @@
-import styles from "./ClassicGame.module.css";
 import { useEffect } from "react";
 import { ClassicCanvas } from "../canvas/ClassicCanvas";
 import { useGameController } from "../../hooks/useGameController";
 import { COMPUTER_DELAY } from "../../constants";
+import { Box, Button, Typography } from "@mui/material";
 
 const ClassicGame = () => {
   console.log("ClassicRefresh");
   const {
-    makeMove,
     locationData,
     feedbackText,
+    gameOver,
+    computerTurn,
+    makeMove,
     getComputerMove,
     resetGame,
-    computerTurn,
   } = useGameController();
 
   const handleMakeMove = (col: number) => {
@@ -20,7 +21,7 @@ const ClassicGame = () => {
   };
 
   const handleReset = () => {
-    if (!computerTurn) resetGame();
+    if (!computerTurn || gameOver) resetGame();
   };
 
   useEffect(() => {
@@ -39,16 +40,22 @@ const ClassicGame = () => {
   }, [computerTurn]);
 
   return (
-    <main className={styles.main}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <ClassicCanvas
         handleClick={handleMakeMove}
         canClick={!computerTurn}
         locationData={locationData}
       />
 
-      <p className={styles.feedback}>{feedbackText}</p>
-      <button onClick={handleReset}>Reset</button>
-    </main>
+      <Typography sx={{ p: 4 }}>{feedbackText}</Typography>
+      <Button onClick={handleReset}>Reset</Button>
+    </Box>
   );
 };
 export { ClassicGame };

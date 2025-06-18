@@ -1,6 +1,6 @@
-import styles from "./SelectColumnButtons.module.css";
 import { useSettings } from "../../store/useSettings";
 import { GAMEBOARD_WIDTH } from "../../constants";
+import { Box, Button } from "@mui/material";
 
 type ChooseColumnButtonsProps = {
   handleClick: (col: number) => void;
@@ -14,11 +14,12 @@ const SelectColumnButtons = ({
   const { zeroBasedIndex } = useSettings();
 
   return (
-    <div className={styles.buttonHolder}>
+    <Box sx={{ display: "flex", gap: 0.5 }}>
       {Array.from({ length: GAMEBOARD_WIDTH }).map((_, buttonIndex) => {
         return (
-          <button
-            className={styles.button}
+          <Button
+            sx={{ minWidth: 0 }}
+            variant="contained"
             key={buttonIndex}
             onClick={() => {
               if (canClick) {
@@ -27,10 +28,10 @@ const SelectColumnButtons = ({
             }}
           >
             {zeroBasedIndex ? buttonIndex : buttonIndex + 1}
-          </button>
+          </Button>
         );
       })}
-    </div>
+    </Box>
   );
 };
 
