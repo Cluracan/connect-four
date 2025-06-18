@@ -20,7 +20,7 @@ const ClassicGame = () => {
   };
 
   const handleReset = () => {
-    resetGame();
+    if (!computerTurn) resetGame();
   };
 
   useEffect(() => {
