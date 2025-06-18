@@ -1,7 +1,9 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { AppBar, Typography } from "@mui/material";
+import { HomeButton } from "../components/HomeButton";
 
 const darkTheme = createTheme({
   palette: {
@@ -17,10 +19,19 @@ export const Route = createRootRoute({
     <>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <header>
-          <Link to="/">Home</Link> <Link to="/about">About</Link>
-        </header>
-        <hr />
+        <AppBar
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "sticky",
+            p: 2,
+          }}
+        >
+          <Typography>Connect Four</Typography>
+          <HomeButton />
+        </AppBar>
         <Outlet />
         <TanStackRouterDevtools />
       </ThemeProvider>

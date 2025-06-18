@@ -11,7 +11,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ClassicLazyRouteImport = createFileRoute('/classic')()
@@ -27,11 +26,6 @@ const BlindfoldLazyRoute = BlindfoldLazyRouteImport.update({
   path: '/blindfold',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/blindfold.lazy').then((d) => d.Route))
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -40,34 +34,30 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/blindfold': typeof BlindfoldLazyRoute
   '/classic': typeof ClassicLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/blindfold': typeof BlindfoldLazyRoute
   '/classic': typeof ClassicLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/blindfold': typeof BlindfoldLazyRoute
   '/classic': typeof ClassicLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/blindfold' | '/classic'
+  fullPaths: '/' | '/blindfold' | '/classic'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blindfold' | '/classic'
-  id: '__root__' | '/' | '/about' | '/blindfold' | '/classic'
+  to: '/' | '/blindfold' | '/classic'
+  id: '__root__' | '/' | '/blindfold' | '/classic'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   BlindfoldLazyRoute: typeof BlindfoldLazyRoute
   ClassicLazyRoute: typeof ClassicLazyRoute
 }
@@ -88,13 +78,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlindfoldLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -107,7 +90,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   BlindfoldLazyRoute: BlindfoldLazyRoute,
   ClassicLazyRoute: ClassicLazyRoute,
 }

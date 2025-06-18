@@ -1,5 +1,5 @@
-import { createLazyFileRoute } from "@tanstack/react-router"
-import { BlindfoldGame } from "../components/blindfoldGame/BlindfoldGame";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { BlindfoldGame } from "../components/BlindfoldGame";
 
 export const Route = createLazyFileRoute("/blindfold")({
   component: RouteComponent,

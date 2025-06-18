@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { BlindfoldCanvas } from "../canvas/BlindfoldCanvas";
-import { SelectColumnButtons } from "../selectColumnButtons/SelectColumnButtons";
-import { useGameController } from "../../hooks/useGameController";
-import { COMPUTER_DELAY } from "../../constants";
+import { BlindfoldCanvas } from "./canvas/BlindfoldCanvas";
+import { SelectColumnButtons } from "./selectColumnButtons/SelectColumnButtons";
+import { useGameController } from "../hooks/useGameController";
+import { COMPUTER_DELAY } from "../constants";
 import { Button, Box, Typography } from "@mui/material";
 
 const BlindfoldGame = () => {
