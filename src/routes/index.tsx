@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { Settings } from "../components/settings/Settings";
+import { createFileRoute } from "@tanstack/react-router";
+import { Settings } from "../components/Settings";
 
 const Index = () => {
   return <Settings />;

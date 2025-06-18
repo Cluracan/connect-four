@@ -1,8 +1,8 @@
 import { Box, Button, Paper, Slider, Typography } from "@mui/material";
-import { useGameController } from "../../hooks/useGameController";
-import { useSettings } from "../../store/useSettings";
+import { useGameController } from "../hooks/useGameController";
+import { useSettings } from "../store/useSettings";
 import { useNavigate } from "@tanstack/react-router";
-import { MAX_DEPTH } from "../../constants";
+import { MAX_DEPTH } from "../constants";
 
 const Settings = () => {
   const navigate = useNavigate();

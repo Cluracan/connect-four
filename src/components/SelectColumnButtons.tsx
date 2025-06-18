@@ -1,5 +1,5 @@
-import { useSettings } from "../../store/useSettings";
-import { GAMEBOARD_WIDTH } from "../../constants";
+import { useSettings } from "../store/useSettings";
+import { GAMEBOARD_WIDTH } from "../constants";
 import { Box, Button } from "@mui/material";
 
 type ChooseColumnButtonsProps = {
