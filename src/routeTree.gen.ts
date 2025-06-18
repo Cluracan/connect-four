@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { createFileRoute } from '@tanstack/react-router'
-import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
@@ -75,11 +74,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/classic': {
+      id: '/classic'
+      path: '/classic'
+      fullPath: '/classic'
+      preLoaderRoute: typeof ClassicLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blindfold': {
+      id: '/blindfold'
+      path: '/blindfold'
+      fullPath: '/blindfold'
+      preLoaderRoute: typeof BlindfoldLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -89,64 +95,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blindfold': {
-      id: '/blindfold'
-      path: '/blindfold'
-      fullPath: '/blindfold'
-      preLoaderRoute: typeof BlindfoldLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/classic': {
-      id: '/classic'
-      path: '/classic'
-      fullPath: '/classic'
-      preLoaderRoute: typeof ClassicLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/classic': {
-      id: '/classic'
-      path: '/classic'
-      fullPath: '/classic'
-      preLoaderRoute: typeof ClassicLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blindfold': {
-      id: '/blindfold'
-      path: '/blindfold'
-      fullPath: '/blindfold'
-      preLoaderRoute: typeof BlindfoldLazyRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
-}
-
-declare module './routes/index' {
-  const createFileRoute: CreateFileRoute<
-    '/',
-    FileRoutesByPath['/']['parentRoute'],
-    FileRoutesByPath['/']['id'],
-    FileRoutesByPath['/']['path'],
-    FileRoutesByPath['/']['fullPath']
-  >
-}
-declare module './routes/about' {
-  const createFileRoute: CreateFileRoute<
-    '/about',
-    FileRoutesByPath['/about']['parentRoute'],
-    FileRoutesByPath['/about']['id'],
-    FileRoutesByPath['/about']['path'],
-    FileRoutesByPath['/about']['fullPath']
-  >
-}
-declare module './routes/blindfold.lazy' {
-  const createLazyFileRoute: CreateLazyFileRoute<
-    FileRoutesByPath['/blindfold']['preLoaderRoute']
-  >
-}
-declare module './routes/classic.lazy' {
-  const createLazyFileRoute: CreateLazyFileRoute<
-    FileRoutesByPath['/classic']['preLoaderRoute']
-  >
 }
 
 const rootRouteChildren: RootRouteChildren = {
