@@ -11,6 +11,10 @@
     "test": "vitest --ui"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/roboto": "^5.2.6",
+    "@mui/material": "^7.1.1",
     "@tanstack/react-router": "^1.121.2",
     "@tanstack/react-router-devtools": "^1.121.5",
     "react": "^19.0.0",
