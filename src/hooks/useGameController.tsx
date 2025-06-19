@@ -7,13 +7,13 @@ import Worker from "../worker?worker";
 // type Result = "win" | "draw" | "ongoing";
 
 const gameBoard = new GameBoard();
-const useGameController = () => {
+export const useGameController = () => {
   const [gameOver, setGameOver] = useState(false);
   const { depth, zeroBasedIndex } = useSettings();
   const [locationData, setLocationData] = useState<LocationData>(null);
   const [feedbackText, setFeedbackText] = useState("Your turn");
   const [computerTurn, setComputerTurn] = useState(false);
-  // const [result, setResult] = useState<Result>("ongoing");
+
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const useGameController = () => {
     workerRef.current.onmessage = (e) => {
       console.log(e.data);
     };
-    workerRef.current.postMessage("Hello from gameControl");
+    workerRef.current.postMessage("Hello from useGameController");
     return () => {
       workerRef.current?.terminate();
     };
@@ -45,11 +45,9 @@ const useGameController = () => {
         gameBoard.playColumn(col);
         //draw check
         if (gameBoard.drawnGame()) {
-          // setResult("draw");
           setFeedbackText("It/'s a draw!");
           setGameOver(true);
         } else {
-          // setResult("ongoing");
           setFeedbackText(
             `${curPlayer === "human" ? "You play" : "Computer plays"} column ${zeroBasedIndex ? col : col + 1}`
           );
@@ -83,17 +81,6 @@ const useGameController = () => {
         );
       };
     }
-
-    // const moveOptions = moveFinder(gameBoard, depth);
-    // let bestMove = 0;
-    // let bestScore = -Infinity;
-    // moveOptions.forEach((curScore, curIndex) => {
-    //   if (curScore !== null && curScore >= bestScore) {
-    //     bestMove = curIndex;
-    //     bestScore = curScore;
-    //   }
-    // });
-    // return bestMove;
   };
 
   const resetGame = () => {
@@ -114,5 +101,3 @@ const useGameController = () => {
     resetGame,
   };
 };
-
-export { useGameController };

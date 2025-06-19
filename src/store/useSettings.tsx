@@ -10,7 +10,7 @@ interface SettingsState {
   toggleZeroBasedIndex: () => void;
 }
 
-const useSettings = create<SettingsState>()((set) => ({
+export const useSettings = create<SettingsState>()((set) => ({
   depth: 4,
   updateDepth: (depth) => set({ depth }),
   increaseDepth: () =>
@@ -25,5 +25,3 @@ const useSettings = create<SettingsState>()((set) => ({
   toggleZeroBasedIndex: () =>
     set((state) => ({ zeroBasedIndex: !state.zeroBasedIndex })),
 }));
-
-export { useSettings };

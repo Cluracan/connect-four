@@ -2,10 +2,8 @@ import { GameBoard } from "./gameBoard";
 import { TranspostitionTable } from "./transpositionTable";
 const transpositionTable = new TranspostitionTable();
 const moveOrder = [3, 2, 4, 1, 5, 0, 6];
-//TODO transpositiontable gets sent as argument from some main page I think?
-//TODO put moveOrder somewhere sensible? Or set generic to tie in with GameBoard.width etc
 
-const negamax = (
+export const negamax = (
   gameBoard: GameBoard,
   depth: number,
   alpha: number,
@@ -72,5 +70,3 @@ const negamax = (
   }
   return score || 0;
 };
-
-export { negamax };

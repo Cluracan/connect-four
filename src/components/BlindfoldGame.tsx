@@ -4,7 +4,7 @@ import { SelectColumnButtons } from "./SelectColumnButtons";
 import { useGameController } from "../hooks/useGameController";
 import { Button, Box, Typography } from "@mui/material";
 
-const BlindfoldGame = () => {
+export const BlindfoldGame = () => {
   console.log("BlindfoldRefresh");
 
   const {
@@ -70,4 +70,3 @@ const BlindfoldGame = () => {
     </Box>
   );
 };
-export { BlindfoldGame };

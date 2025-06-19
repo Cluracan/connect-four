@@ -1,20 +1,9 @@
-const GAMEBOARD_WIDTH = 7;
-const GAMEBOARD_HEIGHT = 6;
-const MIN_DEPTH = 0;
-const MAX_DEPTH = 7;
+export const GAMEBOARD_WIDTH = 7;
+export const GAMEBOARD_HEIGHT = 6;
+export const MIN_DEPTH = 0;
+export const MAX_DEPTH = 8;
 
-const HUMAN_COLOUR = "red";
-const COMPUTER_COLOUR = "yellow";
-const MAX_DISC_RADIUS = 20;
-const COMPUTER_DELAY = 1500;
-
-export {
-  GAMEBOARD_HEIGHT,
-  GAMEBOARD_WIDTH,
-  MIN_DEPTH,
-  MAX_DEPTH,
-  HUMAN_COLOUR,
-  COMPUTER_COLOUR,
-  MAX_DISC_RADIUS,
-  COMPUTER_DELAY,
-};
+export const HUMAN_COLOUR = "red";
+export const COMPUTER_COLOUR = "yellow";
+export const MAX_DISC_RADIUS = 20;
+export const COMPUTER_DELAY = 1500;

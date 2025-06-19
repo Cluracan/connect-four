@@ -4,7 +4,7 @@ import { useSettings } from "../store/useSettings";
 import { useNavigate } from "@tanstack/react-router";
 import { MAX_DEPTH, MIN_DEPTH } from "../constants";
 
-const Settings = () => {
+export const Settings = () => {
   const navigate = useNavigate();
   const { depth, updateDepth, zeroBasedIndex, toggleZeroBasedIndex } =
     useSettings();
@@ -82,5 +82,3 @@ const Settings = () => {
     </Paper>
   );
 };
-
-export { Settings };

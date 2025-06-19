@@ -11,7 +11,7 @@ interface CanvasProps {
   locationData: LocationData | undefined;
 }
 
-const BlindfoldCanvas = ({ locationData }: CanvasProps) => {
+export const BlindfoldCanvas = ({ locationData }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const { radius: RADIUS } = useWindowDimensions();
@@ -39,5 +39,3 @@ const BlindfoldCanvas = ({ locationData }: CanvasProps) => {
     <canvas ref={canvasRef} width={7 * 3 * RADIUS} height={7 * 3 * RADIUS} />
   );
 };
-
-export { BlindfoldCanvas };

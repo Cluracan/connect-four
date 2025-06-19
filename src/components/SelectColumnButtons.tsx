@@ -7,7 +7,7 @@ type ChooseColumnButtonsProps = {
   canClick: boolean;
 };
 
-const SelectColumnButtons = ({
+export const SelectColumnButtons = ({
   handleClick,
   canClick,
 }: ChooseColumnButtonsProps) => {
@@ -34,5 +34,3 @@ const SelectColumnButtons = ({
     </Box>
   );
 };
-
-export { SelectColumnButtons };

@@ -14,7 +14,6 @@ const generateBottomMask = (width: number, height: number): bigint => {
     : generateBottomMask(width - 1, height) |
         (1n << BigInt((width - 1) * (height + 1)));
 };
-// THIS IS YOUR HOOK
 
 class GameBoard {
   static width = GAMEBOARD_WIDTH;
@@ -152,87 +151,27 @@ class GameBoard {
         (position << shift) &
         (position << (2n * shift)) &
         ((position << (3n * shift)) & blankSpace);
-      // if (winningPositions !== 0n) {
-      //   console.log(position.toString(2));
-      //   console.log(
-      //     ((position << shift) & (position << (2n * shift))).toString(2)
-      //   );
-      //   console.log(
-      //     `win 1 on ${
-      //       shift === 6n
-      //         ? "diag /"
-      //         : shift === 7n
-      //         ? "horiz"
-      //         : shift === 8n
-      //         ? "diag \\"
-      //         : "oops"
-      //     }`
-      //   );
-      //   console.log((winningPositions & this.possibleMoves()).toString(2));
-      // }
+
       //  XX.X
       winningPositions |=
         (position << shift) &
         (position << (2n * shift)) &
         (position >> shift) &
         blankSpace;
-      // if (winningPositions !== 0n) {
-      //   console.log(
-      //     `win 2 on ${
-      //       shift === 6n
-      //         ? "diag /"
-      //         : shift === 7n
-      //         ? "horiz"
-      //         : shift === 8n
-      //         ? "diag \\"
-      //         : "oops"
-      //     }`
-      //   );
-      // }
+
       //  X.XX
       winningPositions |=
         (position << shift) &
         (position >> shift) &
         ((position >> (2n * shift)) & blankSpace);
-      // if (winningPositions !== 0n) {
-      //   console.log(
-      //     `win 3 on ${
-      //       shift === 6n
-      //         ? "diag /"
-      //         : shift === 7n
-      //         ? "horiz"
-      //         : shift === 8n
-      //         ? "diag \\"
-      //         : "oops"
-      //     }`
-      //   );
-      // }
+
       //  .XXX
       winningPositions |=
         (position >> shift) &
         (position >> (2n * shift)) &
         (position >> (3n * shift)) &
         blankSpace;
-      // if (winningPositions !== 0n) {
-      //   console.log(
-      //     `win 4 on ${
-      //       shift === 6n
-      //         ? "diag /"
-      //         : shift === 7n
-      //         ? "horiz"
-      //         : shift === 8n
-      //         ? "diag \\"
-      //         : "oops"
-      //     }`
-      //   );
-      // }
     }
-    // console.log(
-    //   `getWinningPositions returns ${(
-    //     winningPositions &
-    //     (this.boardMask ^ mask)
-    //   ).toString(2)}`
-    // );
     return winningPositions & (this.boardMask ^ mask);
   }
 
@@ -385,56 +324,45 @@ class GameBoard {
       BigInt(GameBoard.height + 1),
       BigInt(GameBoard.height + 2),
     ]) {
-      // console.log(
-      //   `${
-      //     shift === BigInt(GameBoard.height)
-      //       ? "Diagonal \\"
-      //       : shift === BigInt(GameBoard.height + 1)
-      //       ? "Horizontal"
-      //       : "Diagonal /"
-      //   }`
-      // );
       // XX..
       let fourMatch =
         (position << shift) &
         (position << (2n * shift)) &
         (blankSpace & (blankSpace >> shift));
       twoCount += this.bitCount(fourMatch);
-      // console.log({ matchRight: this.bitCount(fourMatch) });
+
       //..XX
       fourMatch =
         (position >> shift) &
         (position >> (2n * shift)) &
         (blankSpace & (blankSpace << shift));
       twoCount += this.bitCount(fourMatch);
-      // console.log({ matchLeft: this.bitCount(fourMatch) });
+
       // .X.X. (test L/R ends individually)
       let XOXmask = (position << shift) & (position >> shift) & blankSpace;
       fourMatch = XOXmask & (blankSpace << (2n * shift));
       twoCount += this.bitCount(fourMatch);
-      // console.log({ matchOXOX: this.bitCount(fourMatch) });
+
       fourMatch = XOXmask & (blankSpace >> (2n * shift));
       twoCount += this.bitCount(fourMatch);
-      // console.log({ matchXOXO: this.bitCount(fourMatch) });
+
       //X..X
       fourMatch =
         position &
         (position << (3n * shift)) &
         ((blankSpace << shift) & (blankSpace << (2n * shift)));
       twoCount += this.bitCount(fourMatch);
-      // console.log({ matchXOOX: this.bitCount(fourMatch) });
+
       //.XX.
       fourMatch =
         (position << shift) &
         (position << (2n * shift)) &
         (blankSpace & (blankSpace << (3n * shift)));
       twoCount += this.bitCount(fourMatch);
-      // console.log({ matchOXXO: this.bitCount(fourMatch) });
     }
     let threeCount = this.bitCount(
       this.getWinningPositions(position, this.mask)
     );
-    // console.log({ threeCount });
 
     return 2 * threeCount + twoCount;
   }

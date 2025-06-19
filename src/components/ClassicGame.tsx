@@ -3,7 +3,7 @@ import { ClassicCanvas } from "./canvas/ClassicCanvas";
 import { useGameController } from "../hooks/useGameController";
 import { Box, Button, Typography } from "@mui/material";
 
-const ClassicGame = () => {
+export const ClassicGame = () => {
   // console.log("ClassicRefresh");
 
   const {
@@ -49,4 +49,3 @@ const ClassicGame = () => {
     </Box>
   );
 };
-export { ClassicGame };
