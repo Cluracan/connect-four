@@ -1,9 +1,9 @@
 import { GameBoard } from "../utils/gameBoard";
-import { moveFinder } from "../utils/moveFinder";
+import { COMPUTER_DELAY } from "../constants.ts";
 import { useSettings } from "../store/useSettings";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { LocationData, Player } from "../types.ts";
-
+import Worker from "../worker?worker";
 // type Result = "win" | "draw" | "ongoing";
 
 const gameBoard = new GameBoard();
@@ -14,6 +14,18 @@ const useGameController = () => {
   const [feedbackText, setFeedbackText] = useState("Your turn");
   const [computerTurn, setComputerTurn] = useState(false);
   // const [result, setResult] = useState<Result>("ongoing");
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    workerRef.current = new Worker();
+    workerRef.current.onmessage = (e) => {
+      console.log(e.data);
+    };
+    workerRef.current.postMessage("Hello from gameControl");
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, []);
 
   const makeMove = (col: number) => {
     if (gameBoard.canPlay(col) && !gameOver) {
@@ -49,17 +61,39 @@ const useGameController = () => {
   };
 
   const getComputerMove = () => {
-    const moveOptions = moveFinder(gameBoard, depth);
-    console.log(moveOptions);
-    let bestMove = 0;
-    let bestScore = -Infinity;
-    moveOptions.forEach((curScore, curIndex) => {
-      if (curScore !== null && curScore >= bestScore) {
-        bestMove = curIndex;
-        bestScore = curScore;
-      }
-    });
-    return bestMove;
+    if (workerRef.current) {
+      const start = performance.now();
+
+      workerRef.current.postMessage({
+        action: "find",
+        boardMask: gameBoard.boardMask,
+        currentPosition: gameBoard.currentPosition,
+        moveCount: gameBoard.moveCount,
+        moveHistory: gameBoard.moveHistory,
+        depth,
+      });
+      workerRef.current.onmessage = (e) => {
+        const end = performance.now();
+        const elapsed = end - start;
+        setTimeout(
+          () => {
+            makeMove(e.data.bestMove);
+          },
+          elapsed > COMPUTER_DELAY ? 0 : COMPUTER_DELAY - elapsed
+        );
+      };
+    }
+
+    // const moveOptions = moveFinder(gameBoard, depth);
+    // let bestMove = 0;
+    // let bestScore = -Infinity;
+    // moveOptions.forEach((curScore, curIndex) => {
+    //   if (curScore !== null && curScore >= bestScore) {
+    //     bestMove = curIndex;
+    //     bestScore = curScore;
+    //   }
+    // });
+    // return bestMove;
   };
 
   const resetGame = () => {

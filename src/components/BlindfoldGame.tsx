@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { BlindfoldCanvas } from "./canvas/BlindfoldCanvas";
 import { SelectColumnButtons } from "./SelectColumnButtons";
 import { useGameController } from "../hooks/useGameController";
-import { COMPUTER_DELAY } from "../constants";
 import { Button, Box, Typography } from "@mui/material";
 
 const BlindfoldGame = () => {
@@ -34,16 +33,7 @@ const BlindfoldGame = () => {
 
   useEffect(() => {
     if (computerTurn) {
-      const start = performance.now();
-      let bestMove = getComputerMove();
-      const end = performance.now();
-      const elapsed = end - start;
-      setTimeout(
-        () => {
-          handleMakeMove(bestMove);
-        },
-        elapsed > COMPUTER_DELAY ? 0 : COMPUTER_DELAY - elapsed
-      );
+      getComputerMove();
     }
   }, [computerTurn]);
 

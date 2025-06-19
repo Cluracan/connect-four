@@ -19,7 +19,7 @@ export const ClassicCanvas = ({
   handleClick,
   canClick,
 }: CanvasProps) => {
-  console.log("ClassicCanvasRefresh");
+  // console.log("ClassicCanvasRefresh");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [boundingRect, setBoundingRect] = useState({

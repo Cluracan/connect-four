@@ -62,7 +62,6 @@ export const dropDisc = (
 ) => {
   let animationFrameID: number;
   if (locationData) {
-    console.log(locationData);
     const oldLocationData = locationData.slice(0, locationData.length - 1);
     const curStone = locationData[locationData.length - 1];
     setStoneDropping(true);

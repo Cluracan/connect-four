@@ -2,7 +2,7 @@ import { Box, Button, Paper, Slider, Typography } from "@mui/material";
 import { useGameController } from "../hooks/useGameController";
 import { useSettings } from "../store/useSettings";
 import { useNavigate } from "@tanstack/react-router";
-import { MAX_DEPTH } from "../constants";
+import { MAX_DEPTH, MIN_DEPTH } from "../constants";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -35,13 +35,13 @@ const Settings = () => {
       <Slider
         sx={{ m: 4, maxWidth: 200 }}
         aria-label="Difficulty"
-        defaultValue={depth}
+        value={depth}
         getAriaValueText={(value) => `${value}`}
         valueLabelDisplay="auto"
         shiftStep={1}
         step={1}
         marks
-        min={1}
+        min={MIN_DEPTH}
         max={MAX_DEPTH}
         onChange={(_, value) => {
           updateDepth(value);

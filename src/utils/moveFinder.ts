@@ -14,9 +14,11 @@ const moveFinder = (gameBoard: GameBoard, depth: number) => {
     if (move !== 0n) {
       gameBoard.playMove(move);
       moveArray[i] = -negamax(gameBoard, depth, -Infinity, Infinity);
+
       gameBoard.undoMove(move);
     }
   }
+
   return moveArray;
 };
 
