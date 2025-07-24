@@ -4,7 +4,6 @@ import { useSettings } from "../store/useSettings";
 import { useState, useEffect, useRef } from "react";
 import { LocationData, Player } from "../types.ts";
 import Worker from "../worker?worker";
-// type Result = "win" | "draw" | "ongoing";
 
 const gameBoard = new GameBoard();
 export const useGameController = () => {
